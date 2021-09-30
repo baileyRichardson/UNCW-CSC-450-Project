@@ -3,8 +3,9 @@ For account settings.
 
 Bailey Richardson
 """
+from User import User
 
-def get_account_preferences(user: User) -> List[accountPreferences]:
+def get_account_preferences(user: User) -> List[accountInfo]:
     """
     This method returns the account preferences for a user.
     :param self: the User object for whom to retrieve the account preferences
@@ -13,7 +14,7 @@ def get_account_preferences(user: User) -> List[accountPreferences]:
     pass
 
 
-def get_notification_preferences(user: User) -> List[notificationPreferences]:
+def get_notification_preferences(user: User) -> List[accountInfo]:
     """
     This method returns the notification preferences for a user.
     :param user: the User object for whom you want to get notification preferences
