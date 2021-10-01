@@ -1,6 +1,6 @@
 # CSC 450 - Team Project
 ## Team Members
-## Adan
+## Adan Navarez Munguia
 ## Matt Jarrett
 ## William Ebright
 ## Tan Ngo
