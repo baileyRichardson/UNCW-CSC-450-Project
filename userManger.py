@@ -1,7 +1,8 @@
 #userManager Component - Tan Ngo
+import User
 
 def hello ():
-    return "Hello from Component steamSetting"
+    return "Hello from Component userManager"
 
 def get_user(username: str) -> User:
     """
