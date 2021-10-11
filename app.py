@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 import Notifications
 import Playtime
 import steamSetting
@@ -8,13 +8,21 @@ import Report
 
 app = Flask(__name__)
 
-@app.route('/')
-def hello_world():  # put application's code here
-    #return hello()
-    return '<h3>' + Notifications.hello() + '<h3><h3>' + Playtime.hello() + '<h3><h3>' + steamSetting.hello() +\
-           '<h3><h3>' + userManger.hello() + '<h3><h3>' + accountSettings.hello() + '<h3>''<h3>' + Report.hello() + '<h3>'
 
-# call hello method from all six here
+@app.route('/')
+def dashboard():
+    username = "John Smith"
+    return render_template("dashboard.html", user=username)
+
+@app.route('/reports/')
+def reports():
+    return render_template("reports.html")
+
+
+@app.route('/settings/')
+def settings():
+    return render_template("settings.html")
+
 
 if __name__ == '__main__':
     app.run()

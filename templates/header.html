@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %} - Steam Monitor</title>
+</head>
+<header>
+    <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" alt="Steam Monitor Logo">
+    <ul class ="navmenu">
+        <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+        <li><a href="{{ url_for('reports') }}">Reports</a></li>
+        <li><a href="{{ url_for('settings') }}">Settings</a></li>
+    </ul>
+</header>
+{% block content %}{% endblock %}
+</html>
