@@ -31,7 +31,7 @@ def login():
         password = request.form['pass']
         try:
             authentication.sign_in_with_email_and_password(email, password)
-            return render_template('loginPage.html', s=successful)
+            return render_template("dashboard.html")
         except:
             return render_template('loginPage.html', us=unsuccessful)
 
@@ -42,10 +42,7 @@ def login():
 #Testing, logging in
 
 
-app = Flask(__name__)
-
-
-@app.route('/')
+@app.route('/dashboard/')
 def dashboard():
     username = "John Smith"
     return render_template("dashboard.html", user=username)
@@ -58,6 +55,11 @@ def reports():
 @app.route('/settings/')
 def settings():
     return render_template("settings.html")
+
+@app.route('/signup/')
+def signup():
+    return render_template("signupPage.html")
+
 
 if __name__ == '__main__':
     app.run()
