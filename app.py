@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import *
 import Notifications
 import Playtime
 import steamSetting
@@ -6,6 +6,10 @@ import userManger
 import accountSettings
 import Report
 import pyrebase
+
+app = Flask(__name__)
+
+@app.route('/', methods = ["get", "post"])
 
 #Firebase Authentication setup
 firebaseConfig = { "apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
@@ -18,12 +22,15 @@ firebaseConfig = { "apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
     "measurementId": "G-97CZL0FRJF"}
 
 firebase = pyrebase.initialize_app(firebaseConfig)
+if request.method == "post":
+    email = request.form["name"]
+    password = request.form["pass"]
+    return render_template('loginPage.html')
 authentication = firebase.auth()
 #Testing, creating random account
 #authentication.create_user_with_email_and_password("tdn5547@uncw.edu", "password")
 #Testing, logging in
-email = "tdn5547@uncw.edu"
-password = input("Enter Pass:")
+
 authentication.sign_in_with_email_and_password(email,password)
 
 app = Flask(__name__)
@@ -42,7 +49,6 @@ def reports():
 @app.route('/settings/')
 def settings():
     return render_template("settings.html")
-
 
 if __name__ == '__main__':
     app.run()

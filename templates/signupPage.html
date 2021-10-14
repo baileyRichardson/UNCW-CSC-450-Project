@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <style>
+        html {
+            background-color: white;
+        }
+
+        header {
+            border-bottom: 2px solid black;
+            background-color: white;
+        }
+
+        h1, h2{
+            font-family: sans-serif;
+            text-align : center;
+            {#text-indent: 15px;#}
+        }
+
+        form {
+            text-align : center;
+        }
+
+        body {
+            border: 3px solid black;
+            background-color: white;
+            margin: 0 auto;
+            width: 600px;
+            display: block;
+        }
+
+        {#footer {#}
+        {#    font-size: 90%;#}
+        {#    text-align: center;#}
+        {#    border-top: 2px solid black;#}
+        {#    background-color: lavender;#}
+        {#    padding: 10px;#}
+        {#}#}
+
+        main{
+            padding: 15px;
+        }
+
+        input {
+            padding: 15px;
+            margin: 5px
+        }
+
+        .button {
+            height : 50px;
+            width : 180px;
+            text-align: center;
+            background-color: dodgerblue;
+            padding: 15px;
+            margin: 10px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to SteamMonitor</h1>
+        <h2>Please Create an Account</h2>
+    </header>
+    <main>
+{#        <h2>A title for the box</h2>#}
+{#        <p>write some shit about what the hell the box does</p>#}
+        <form action="/" method="post">
+{#            <h2>Please create an account</h2>#}
+{#            <label for="inputEmail">Email address</label><br>#}
+            <input type="email" id="inputEmail" name="name" placeholder="Email address" required autofocus><br>
+{#            <label for="inputPassword">Password</label><br>#}
+            <input type="password" id="inputPassword" name="pass" placeholder="Password" required autofocus><br>
+            <button class="button" type="submit" >Sign Up</button>
+
+        </form>
+    </main>
+{#    <footer>#}
+{#        <a href="signupPage.html">Sign up</a>#}
+{#    </footer>#}
+
+</body>
+</html>
