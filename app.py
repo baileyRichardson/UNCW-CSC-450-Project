@@ -26,7 +26,7 @@ authentication = firebase.auth()
 def login():
     unsuccessful = 'Please check your credentials'
     successful = 'Login successful'
-    if request.method == 'POST':
+    if request.method == "post":
         email = request.form['name']
         password = request.form['pass']
         try:
@@ -56,8 +56,19 @@ def reports():
 def settings():
     return render_template("settings.html")
 
-@app.route('/signup/')
+# @app.route('/signup/')
+@app.route('/signup/', methods = ["get", "post"])
 def signup():
+
+    if request.method == "post":
+        email = request.form["name"]
+        password = request.form["pass"]
+        try:
+            authentication.create_user_with_email_and_password(email, password)
+            return render_template("loginPage.html")
+        except:
+            return render_template("signupPage.html")
+
     return render_template("signupPage.html")
 
 
