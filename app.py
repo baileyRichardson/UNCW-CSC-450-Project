@@ -9,34 +9,40 @@ import pyrebase
 
 app = Flask(__name__)
 
-@app.route('/', methods = ["get", "post"])
-
 #Firebase Authentication setup
 firebaseConfig = { "apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
-    "authDomain": "csc-450-group-5-project.firebaseapp.com",
-    "databaseURL": "https://csc-450-group-5-project-default-rtdb.firebaseio.com",
-    "projectId": "csc-450-group-5-project",
-    "storageBucket": "csc-450-group-5-project.appspot.com",
-    "messagingSenderId": "248907054984",
-    "appId": "1:248907054984:web:3e56f6fefbb0ea8d67c43d",
-    "measurementId": "G-97CZL0FRJF"}
+                    "authDomain": "csc-450-group-5-project.firebaseapp.com",
+                    "databaseURL": "https://csc-450-group-5-project-default-rtdb.firebaseio.com",
+                    "projectId": "csc-450-group-5-project",
+                    "storageBucket": "csc-450-group-5-project.appspot.com",
+                    "messagingSenderId": "248907054984",
+                    "appId": "1:248907054984:web:3e56f6fefbb0ea8d67c43d",
+                    "measurementId": "G-97CZL0FRJF"}
 
 firebase = pyrebase.initialize_app(firebaseConfig)
-if request.method == "post":
-    email = request.form["name"]
-    password = request.form["pass"]
-    return render_template('loginPage.html')
 authentication = firebase.auth()
+
+@app.route('/', methods = ["get", "post"])
+def login():
+    unsuccessful = 'Please check your credentials'
+    successful = 'Login successful'
+    if request.method == 'POST':
+        email = request.form['name']
+        password = request.form['pass']
+        try:
+            authentication.sign_in_with_email_and_password(email, password)
+            return render_template("dashboard.html")
+        except:
+            return render_template('loginPage.html', us=unsuccessful)
+
+    return render_template('loginPage.html')
+
 #Testing, creating random account
 #authentication.create_user_with_email_and_password("tdn5547@uncw.edu", "password")
 #Testing, logging in
 
-authentication.sign_in_with_email_and_password(email,password)
 
-app = Flask(__name__)
-
-
-@app.route('/')
+@app.route('/dashboard/')
 def dashboard():
     username = "John Smith"
     return render_template("dashboard.html", user=username)
@@ -49,6 +55,11 @@ def reports():
 @app.route('/settings/')
 def settings():
     return render_template("settings.html")
+
+@app.route('/signup/')
+def signup():
+    return render_template("signupPage.html")
+
 
 if __name__ == '__main__':
     app.run()
