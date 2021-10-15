@@ -6,6 +6,7 @@ import userManger
 import accountSettings
 import Report
 import pyrebase
+import DatabaseTest
 
 app = Flask(__name__)
 
@@ -44,8 +45,9 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
-    username = "John Smith"
-    return render_template("dashboard.html", user=username)
+    username = "000000002"
+    steam = 12345
+    return render_template("dashboard.html", user=DatabaseTest.test(username, 12345))
 
 @app.route('/reports/')
 def reports():
@@ -55,6 +57,22 @@ def reports():
 @app.route('/settings/')
 def settings():
     return render_template("settings.html")
+
+@app.route('/settings/settingSteamAccount')
+def settingSteamAccount():
+    return render_template("settingSteamAccount.html")
+
+@app.route('/settings/settingPlaytimeTracking')
+def settingPlaytimeTracking():
+    return render_template("settingPlaytimeTracking.html")
+
+@app.route('/settings/settingNotifications')
+def settingNotifications():
+    return render_template("settingNotifications.html")
+
+@app.route('/settings/settingWatchList')
+def settingWatchList():
+    return render_template("settingWatchList.html")
 
 @app.route('/signup/', methods = ["get", "post"])
 def signup():
