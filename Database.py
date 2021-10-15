@@ -64,7 +64,7 @@ def addSteamAccount(userID: str, steamID: int):
     :return: True for success, False for failure
     '''
     if getUser(userID) is not None:
-        new_data = {"Auto Track": False,"Limit Duration": "week", "Playtime Limit": 0.0, "Total Playtime": 0.0, "Owned Games": {"Temp": 0}, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}}
+        new_data = {"Auto Track": False,"Limit Duration": "week", "Playtime Limit": 0.0, "Total Playtime": 0.0, "Owned Games": {"Temp": 0}, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
         db.child("Users/"+userID+"/Steam Accounts").child(steamID).update(new_data)
         return True
     else:
@@ -241,6 +241,58 @@ def removeTrackedGame(gameID: str, userID: str, steamID: int):
         return False
 
 
+def updateWatchGame(userID: str, steamID: int, gameID: str, price: float):
+    '''
+    This function changes the price on a watched game
+    :param userID: the associated user
+    :param steamID: the steam account
+    :param gameID: the game being watched
+    :param price: the updated price
+    :return: True for success, False for failure
+    '''
+    if getSteamAccount(userID, steamID) is not None:
+        db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("Watched Games").update({gameID : price})
+        return True
+    else:
+        return False
+
+
+def addWatchGame(userID: str, steamID: int, gameID: str, price: float):
+    '''
+    This function adds a game to be watched at a certain price
+    :param userID: the associated user
+    :param steamID: the steam account
+    :param gameID: the game being watched
+    :param price: the price being watched for
+    :return: True for success, False for failure
+    '''
+    if getSteamAccount(userID, steamID) is not None:
+        if checkforWatched(userID, steamID, gameID) is None:
+            db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Watched Games").update({gameID: price})
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
+def removeWatchGame(userID: str, steamID: int, gameID: str):
+    '''
+    This function removes a game from the watch list
+    :param userID: the associated user
+    :param steamID: the steam account
+    :param gameID: the game being removed
+    :return: True for success, False for failure
+    '''
+    if getSteamAccount(userID, steamID) is not None:
+        if checkforWatched(userID, steamID, gameID):
+            db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Watched Games").child(gameID).remove()
+            return True
+        else:
+            return False
+    else:
+        return False
+
 
 def addOwnedGame(gameID: str, userID: str, steamID: int, auto: bool):
     '''
@@ -351,6 +403,19 @@ def checkforPlaytime(userID: str, steamID: int, gameID: str):
             print(gameID + " has Playtime information")
         else:
             print(gameID + " has no Playtime information")
+        return found
+    else:
+        return False
+
+
+def checkforWatched(userID: str, steamID: int, gameID: str):
+    if getSteamAccount(userID, steamID) is not None:
+        found = False
+        if(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Watched Games").child(gameID).get().val() != None):
+            found = True
+            print(gameID + " is being watched!")
+        else:
+            print(gameID + " is not being watched")
         return found
     else:
         return False
