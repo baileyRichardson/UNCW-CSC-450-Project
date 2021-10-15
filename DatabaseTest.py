@@ -45,6 +45,12 @@ def test(username, steamName):
     Database.checkforOwned(username, steamName, "Portal 2")
     # update the play time on a game that's tracked, automatically updating the total time
     Database.updatePlayTime(username, steamName, "Portal 2", 2.4)
+    # start watching a game
+    Database.addWatchGame(username, steamName, "Cyberpunk 2077", 30.00)
+    Database.addWatchGame(username, steamName, "Metroid Dread", 30.00)
+    # remove game from watch list
+    Database.removeWatchGame(username, steamName, "Metroid Dread")
+    Database.updateWatchGame(username, steamName, "Cyberpunk 2077", 40.00)
     # print the total playtime over all games
     print(Database.getTotalPlaytime(username, steamName))
     return username
