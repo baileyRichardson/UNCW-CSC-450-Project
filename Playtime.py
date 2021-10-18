@@ -2,7 +2,7 @@
 Author: William Ebright
 """
 from flask import Flask, render_template  # Unnecessary for my area?
-# import Report
+# import Report  #for later
 from steamwebapi import profiles
 from steamwebapi.api import ISteamUser, IPlayerService
 
@@ -128,7 +128,7 @@ def main():
     main currently set up to show off steamAPI calls for Sprint 1!
     """
     # steam_username = Report.getusername()  # This is idea for future.
-    steam_username = "Hamsammy"  #This displays someone else's account
+    steam_username = "Hamsammy"  #This displays someone else's account by getting their userID
     steam_api_key = '25F01C7C51803E91E331CBAD669F542C'  # William Ebright's steamAPI key
     userID = Playtime.get_player_id(steam_username, steam_api_key)
     # userID = 76561198023715682  #This is my own user ID for showing in class.
