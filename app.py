@@ -1,3 +1,4 @@
+import requests
 from flask import *
 import Notifications
 import Playtime
@@ -6,6 +7,8 @@ import userManger
 import accountSettings
 import Report
 import pyrebase
+from flask import json
+from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 
@@ -22,20 +25,23 @@ firebaseConfig = { "apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
 firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
 
-@app.route('/', methods = ["get", "post"])
+@app.route('/', methods = ["GET", "POST"])
 def login():
-    unsuccessful = 'Please check your credentials'
-    successful = 'Login successful'
-    if request.method == 'POST':
-        email = request.form['name']
-        password = request.form['pass']
+    unsuccessful = "Please check your credentials"
+    successful = "Login successful"
+    if request.method == "POST":
+        email = request.form["name"]
+        password = request.form["pass"]
         try:
             authentication.sign_in_with_email_and_password(email, password)
             return render_template("dashboard.html")
-        except:
-            return render_template('loginPage.html', us=unsuccessful)
+        except requests.HTTPError as exception:
+            error_json = exception.args[1]
+            error = json.loads(error_json)["error"]["message"]
+            if error == "EMAIL_NOT_FOUND":
+                return "No account linked to this email address can be found."
 
-    return render_template('loginPage.html')
+    return render_template("loginPage.html")
 
 #Testing, creating random account
 #authentication.create_user_with_email_and_password("tdn5547@uncw.edu", "password")
@@ -56,16 +62,20 @@ def reports():
 def settings():
     return render_template("settings.html")
 
-@app.route('/signup/', methods = ["get", "post"])
+@app.route('/signup/', methods = ["GET", "POST"])
 def signup():
-    if request.method == 'POST':
-        email = request.form['name']
-        password = request.form['pass']
+    if request.method == "POST":
+        email = request.form["name"]
+        password = request.form["pass"]
         try:
             authentication.create_user_with_email_and_password(email, password)
             return render_template("dashboard.html")
-        except:
-            return render_template('loginPage.html')
+        except requests.HTTPError as exception:
+            error_json = exception.args[1]
+            error = json.loads(error_json)["error"]["message"]
+            if error == "EMAIL_EXISTS":
+                return "This email is already in use."
+
     return render_template("signupPage.html")
 
 
