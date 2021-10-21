@@ -69,6 +69,9 @@
     <main>
 {#        <h2>A title for the box</h2>#}
 {#        <p>write some shit about what the hell the box does</p>#}
+        {% if errors != false %}
+        <p> {{ errors }}</p>
+        {% endif %}
         <form action="/" method="post">
 {#            <h2>Please sign in</h2>#}
 {#            <label for="inputEmail">Email address</label><br>#}
