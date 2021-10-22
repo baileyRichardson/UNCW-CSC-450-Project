@@ -1,12 +1,8 @@
 #userManager Component - Tan Ngo
 import User
 
-def create_mainAccount(email: str, password: str):
-
-    pass
-
-def hello ():
-    return "Hello from Component userManager"
+def __init__(self, email: str):
+    self.email = email
 
 def get_user(username: str) -> User:
     """

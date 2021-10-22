@@ -8,10 +8,12 @@ import accountSettings
 import Report
 import pyrebase
 from flask import json
+import os
 from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
-
+key = os.urandom(12).hex()
+app.secret_key = key
 # Firebase Authentication setup
 firebaseConfig = {"apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
                   "authDomain": "csc-450-group-5-project.firebaseapp.com",
@@ -25,7 +27,6 @@ firebaseConfig = {"apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
 firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
 
-
 @app.route('/', methods=["GET", "POST"])
 def login():
     unsuccessful = "Please check your credentials"
@@ -34,7 +35,10 @@ def login():
         email = request.form["name"]
         password = request.form["pass"]
         try:
-            authentication.sign_in_with_email_and_password(email, password)
+            user = authentication.sign_in_with_email_and_password(email, password)
+            user = authentication.refresh(user['refreshToken'])
+            user_token = user["idToken"]
+            session["user"] = user_token
             return render_template("dashboard.html")
         except requests.HTTPError as exception:
             error_json = exception.args[1]
@@ -55,18 +59,30 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
-    username = "John Smith"
-    return render_template("dashboard.html", user=username)
+    try:
+        print(session["user"])
+        username = "John Smith"
+        return render_template("dashboard.html", user=username)
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route('/reports/')
 def reports():
-    return render_template("reports.html")
+    try:
+        print(session["user"])
+        return render_template("reports.html")
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route('/settings/')
 def settings():
-    return render_template("settings.html")
+    try:
+        print(session["user"])
+        return render_template("settings.html")
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route('/signup/', methods=["GET", "POST"])
