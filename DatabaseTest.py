@@ -10,10 +10,13 @@ def test(username, steamName):
     # add steam accounts to the new user
     Database.add_steam_account(username, 1)
     Database.add_steam_account(username, steamName)
+    Database.add_steam_account(username, 67890)
     # get reference to a steam account from the account ID
     print(Database.get_steam_account(username, steamName))
     # remove a steam account
     Database.delete_steam_account(username, 1)
+    # get a list of steam accounts
+    print(Database.list_of_steam_accounts(username))
     # toggle auto tracking
     Database.toggle_auto_track(username, steamName)
     Database.toggle_auto_track(username, steamName)
@@ -49,4 +52,10 @@ def test(username, steamName):
     Database.update_watch_game(username, steamName, "Cyberpunk 2077", 40.00)
     # print the total playtime over all games
     print(Database.get_total_playtime(username, steamName))
+    # print list of watched games
+    print(Database.list_of_watched_games(username, steamName))
+    # print list of tracked games
+    print(Database.list_of_tracked_games(username, steamName))
+    # print list of playtimes
+    print(Database.list_of_playtimes(username, steamName))
     return username
