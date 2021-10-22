@@ -17,17 +17,11 @@ def test(username, steamName):
     # toggle auto tracking
     Database.toggle_auto_track(username, steamName)
     Database.toggle_auto_track(username, steamName)
-    # add games that are automatically added to the tracking
-    Database.add_owned_game("GTA V", username, steamName, True)
-    Database.add_owned_game("Portal 2", username, steamName, True)
-    Database.add_owned_game("Minecraft", username, steamName, True)
-    # add games that are not automatically added to the tracking
-    Database.add_owned_game("Halo", username, steamName, False)
-    Database.add_owned_game("Overwatch", username, steamName, False)
     # add a game to be tracked
+    Database.add_tracked_game("GTA V", username, steamName)
+    Database.add_tracked_game("Portal 2", username, steamName)
+    Database.add_tracked_game("Minecraft", username, steamName)
     Database.add_tracked_game("Halo", username, steamName)
-    # remove a game altogether
-    Database.remove_owned_game("Minecraft", username, steamName)
     # remove a game from being tracked
     Database.remove_tracked_game("GTA V", username, steamName)
     # set how long a period of time you want to impose a limit over (week, month, day)
@@ -41,10 +35,12 @@ def test(username, steamName):
     # check if a game is being tracked
     print(Database.check_for_tracked(username, steamName, "Portal 2"))
     print(Database.check_for_tracked(username, steamName, "GTA V"))
-    # check if a game is owned
-    Database.check_for_owned(username, steamName, "Portal 2")
     # update the play time on a game that's tracked, automatically updating the total time
     Database.update_playtime(username, steamName, "Portal 2", 2.4)
+    # remove a game from being tracked
+    Database.remove_tracked_game("Portal 2", username, steamName)
+    # add a game to be tracked
+    Database.add_tracked_game("Portal 2", username, steamName)
     # start watching a game
     Database.add_watch_game(username, steamName, "Cyberpunk 2077", 30.00)
     Database.add_watch_game(username, steamName, "Metroid Dread", 30.00)
