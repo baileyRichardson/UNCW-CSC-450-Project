@@ -350,6 +350,74 @@ def update_playtime(userID: str, steamID: int, gameID: str, time: float):
         return False
 
 
+def list_of_steam_accounts(userID: str):
+    """
+    This function returns a list of steam accounts
+    :param userID: the associated user
+    :return: a list containing the steam account identifiers, stored as dictionary keys
+    """
+    accountList = []
+    if get_user(userID) is not None:
+        result = db.child("Users/"+userID+"/Steam Accounts").child().get().val()
+        for key in result.keys():
+            accountList.append(key)
+        return accountList
+    else:
+        return None
+
+
+def list_of_watched_games(userID: str, steamID: int):
+    """
+    This function returns a list of price watched games
+    :param userID: the associated user
+    :param steamID: the steam account
+    :return: a list containing the games being price watched, stored as dictionary keys
+    """
+    wgList = []
+    if get_steam_account(userID, steamID) is not None:
+        result = db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Watched Games").child().get().val()
+        for key in result.keys():
+           wgList.append(key)
+        return wgList
+    else:
+        return None
+
+
+def list_of_tracked_games(userID: str, steamID: int):
+    """
+    This function returns a list of currently tracked games
+    :param userID: the associated user
+    :param steamID: the steam account
+    :return: a list containing the games being tracked, stored as dictionary keys
+    """
+    tgList = []
+    if get_steam_account(userID, steamID) is not None:
+        result = db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Tracked Games").child().get().val()
+        for key in result.keys():
+            tgList.append(key)
+        return tgList
+    else:
+        return None
+
+
+def list_of_playtimes(userID: str, steamID: int):
+    """
+    This function returns a list of global stored playtimes
+    :param userID: the associated user
+    :param steamID: the steam account
+    :return: a list containing the playtimes for all games ever tracked, stored as dictionary keys
+    """
+    pList = []
+    if get_steam_account(userID, steamID) is not None:
+        result = db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Playtimes").child().get().val()
+        for key in result.keys():
+            pList.append(key)
+        return pList
+    else:
+        return None
+
+
+
 def check_for_playtime(userID: str, steamID: int, gameID: str):
     """
     This function checks if a game's playtime has ever been recorded
