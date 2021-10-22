@@ -1,11 +1,11 @@
 {% extends "header.html" %}
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Settings{% endblock %}</title>
+    <title>{% block title %}Settings Steam Account{% endblock %}</title>
 </head>
 {% block content %}
 <body>
-    <h1>This is a placeholder for the settings.</h1>
+    <h1>This is a placeholder for the steam account settings.</h1>
     <header></header>
     <nav>
         <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
@@ -13,7 +13,16 @@
         <li><a href="{{ url_for('settingNotifications') }}">Notifications</a></li>
         <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
     </nav>
-    <main></main>
+    <main>
+        <h1>Link a steam account:</h1>
+        <form>
+            <fieldset>
+                <label for="Submit"></label>
+                <input type="submit" name="submit" id="Submit" value="Steam Placeholder Button">
+            </fieldset>
+        </form>
+
+    </main>
     <footer></footer>
 </body>
 {% endblock %}

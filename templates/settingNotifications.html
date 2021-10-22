@@ -1,11 +1,11 @@
 {% extends "header.html" %}
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Settings{% endblock %}</title>
+    <title>{% block title %}Settings Notifications{% endblock %}</title>
 </head>
 {% block content %}
 <body>
-    <h1>This is a placeholder for the settings.</h1>
+    <h1>This is a placeholder for the notifications settings.</h1>
     <header></header>
     <nav>
         <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
@@ -13,7 +13,15 @@
         <li><a href="{{ url_for('settingNotifications') }}">Notifications</a></li>
         <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
     </nav>
-    <main></main>
+    <main>
+        <h1>Enter the time you want to be allowed to play</h1>
+        <form>
+            <fieldset>
+            <label for="Height"> Limit:</label>
+            <input type="text" name="height" id="Height" placeholder="10 hours"><br>      
+            </fieldset>
+        </form>
+    </main>
     <footer></footer>
 </body>
 {% endblock %}
