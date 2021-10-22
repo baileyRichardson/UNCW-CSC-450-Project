@@ -8,7 +8,6 @@ import accountSettings
 import Report
 import pyrebase
 from flask import json
-from werkzeug.exceptions import HTTPException
 
 app = Flask(__name__)
 
@@ -28,8 +27,6 @@ authentication = firebase.auth()
 
 @app.route('/', methods=["GET", "POST"])
 def login():
-    unsuccessful = "Please check your credentials"
-    successful = "Login successful"
     if request.method == "POST":
         email = request.form["name"]
         password = request.form["pass"]
@@ -41,6 +38,13 @@ def login():
             error = json.loads(error_json)["error"]["message"]
             if error == "EMAIL_NOT_FOUND":
                 error_text = "No account linked to this email address can be found."
+            elif error == "INVALID_PASSWORD":
+                error_text = "The password you have entered is incorrect."
+            elif error == "TOO_MANY_ATTEMPTS_TRY_LATER : Access to this account has been temporarily " \
+                          "disabled due to many failed login attempts. You can immediately restore it " \
+                          "by resetting your password or you can try again later.":
+                error_text = "Your account has been temporarily disabled due to too many failed login" \
+                             " attempts. Please reset your password or try again later."
             else:
                 error_text = "Whoops, looks like we have an unaccounted for error: " + error
             return render_template("loginPage.html", errors=error_text)
@@ -69,6 +73,15 @@ def settings():
     return render_template("settings.html")
 
 
+@app.route('/forgotPass/', methods=["GET", "POST"])
+def forgotPassword():
+    if request.method == "POST":
+        email = request.form["name"]
+        authentication.send_password_reset_email(email)
+
+    return render_template("forgotPassword.html")
+
+
 @app.route('/signup/', methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -81,7 +94,13 @@ def signup():
             error_json = exception.args[1]
             error = json.loads(error_json)["error"]["message"]
             if error == "EMAIL_EXISTS":
-                return "This email is already in use."
+                error_text = "An account is already tied to this email address."
+            elif error == "WEAK_PASSWORD : Password should be at least 6 characters":
+                error_text = "You have entered a weak password. Please choose a new password" \
+                             " that is at least 6 characters long."
+            else:
+                error_text = "Whoops, looks like we have an unaccounted for error: " + error
+            return render_template("signupPage.html", errors=error_text)
 
     return render_template("signupPage.html")
 
