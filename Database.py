@@ -15,7 +15,6 @@ db = firebase.database()
 # firebase = firebase.FirebaseApplication('https://csc-450-group-5-project-default-rtdb.firebaseio.com/',None)
 
 
-
 def get_user(userID: str):
     """
     This function returns a reference to the user object, good for checking for a user in the database
@@ -58,13 +57,13 @@ def delete_user(userID: str):
 def add_steam_account(userID: str, steamID: int):
     """
     This function creates a new Steam account and associates it with a given user
-    Initializes Auto Track, Limit Duration, Playtime Limit, Total Playtime, Owned Games, Playtimes, and Tracked Games fields
+    Initializes Auto Track, Limit Duration, Playtime Limit, Total Playtime, Playtimes, and Tracked Games fields
     :param userID: the user the steam account will be associated with
     :param steamID: an integer reference to the steam account
     :return: True for success, False for failure
     """
     if get_user(userID) is not None:
-        new_data = {"Auto Track": False,"Limit Duration": "week", "Playtime Limit": 0.0, "Total Playtime": 0.0, "Owned Games": {"Temp": 0}, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
+        new_data = {"Auto Track": False,"Limit Duration": "week", "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
         db.child("Users/"+userID+"/Steam Accounts").child(steamID).update(new_data)
         return True
     else:
@@ -211,23 +210,27 @@ def update_total_playtime(userID: str, steamID: int, updatedTime: float):
 
 def add_tracked_game(gameID: str, userID: str, steamID: int):
     """
-    This function adds a game that is currently owned to be tracked
+    This function adds a game to be tracked.
+    If the game has not been tracked before, it adds it to a global list of playtimes
     :param gameID: the game string to be added
     :param userID: the associated user
     :param steamID: the steam account
-    :return: True for success, False if the game is not owned
+    :return: True for success, False if the game is already tracked
     """
-    if check_for_owned(userID, steamID, gameID):
+    if not check_for_tracked(userID, steamID, gameID):
         db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Tracked Games").update({gameID: 0.0})
+        # if existing global data doesn't exist
+        if not check_for_playtime(userID, steamID, gameID):
+            add_global_playtime(gameID, userID, steamID)
         return True
     else:
-        print(gameID+" is not owned")
+        print(gameID+" is already tracked")
         return False
 
 
 def remove_tracked_game(gameID: str, userID: str, steamID: int):
     """
-    This function removes a game that is currently owned from being tracked
+    This function removes a game from being tracked
     :param gameID: the game string to be removed
     :param userID: the associated user
     :param steamID: the steam account
@@ -294,9 +297,9 @@ def remove_watch_game(userID: str, steamID: int, gameID: str):
         return False
 
 
-def add_owned_game(gameID: str, userID: str, steamID: int, auto: bool):
+def add_global_playtime(gameID: str, userID: str, steamID: int):
     """
-    This function adds a game to the list of owned games
+    This function adds a game to the list of global game playtimes, even games currently not tracked
     :param gameID: the game string to be added
     :param userID: the associated user
     :param steamID: the steam account
@@ -304,28 +307,7 @@ def add_owned_game(gameID: str, userID: str, steamID: int, auto: bool):
     :return: True for success, False for failure
     """
     if get_steam_account(userID, steamID) is not None:
-        db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Owned Games").update({gameID: gameID})
         db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Playtimes").update({gameID: 0.0})
-        if auto:
-            add_tracked_game(gameID, userID, steamID)
-        return True
-    else:
-        return False
-
-
-def remove_owned_game(gameID: str, userID: str, steamID: int):
-    """
-    This function removes a game from the list of owned games, and by default from the list of tracked games
-    NOTE: this does not remove a game from the list of playtimes. This is so playtimes can be viewed for
-    games that are no longer tracked or owned
-    :param gameID: the game string to be removed
-    :param userID: the associated user
-    :param steamID: the steam account
-    :return: True for success, False for failure
-    """
-    if get_steam_account(userID, steamID) is not None:
-        remove_tracked_game(gameID, userID, steamID)
-        db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Owned Games").child(gameID).remove()
         return True
     else:
         return False
@@ -368,26 +350,6 @@ def update_playtime(userID: str, steamID: int, gameID: str, time: float):
         return False
 
 
-def check_for_owned(userID: str, steamID: int, gameID: str):
-    """
-    This function checks if a game is listed as owned
-    :param userID: the associated user
-    :param steamID: the steam account
-    :param gameID: the game being checked
-    :return: True if the game is found, False if it is not or invalid parameters
-    """
-    if get_steam_account(userID, steamID) is not None:
-        found = False
-        games = db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("Owned Games").get()
-        for game in games.each():
-            #print(game.val())
-            if game.val() == gameID:
-                found = True
-        return found
-    else:
-        return False
-
-
 def check_for_playtime(userID: str, steamID: int, gameID: str):
     """
     This function checks if a game's playtime has ever been recorded
@@ -398,7 +360,7 @@ def check_for_playtime(userID: str, steamID: int, gameID: str):
     """
     if get_steam_account(userID, steamID) is not None:
         found = False
-        if(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Playtimes").child(gameID).get().val() != None):
+        if db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Playtimes").child(gameID).get().val() is not None:
             found = True
             print(gameID + " has Playtime information")
         else:
@@ -411,7 +373,7 @@ def check_for_playtime(userID: str, steamID: int, gameID: str):
 def check_for_watched(userID: str, steamID: int, gameID: str):
     if get_steam_account(userID, steamID) is not None:
         found = False
-        if(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Watched Games").child(gameID).get().val() != None):
+        if db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Watched Games").child(gameID).get().val() is not None:
             found = True
             print(gameID + " is being watched!")
         else:
@@ -431,7 +393,7 @@ def check_for_tracked(userID: str, steamID: int, gameID: str):
     """
     if get_steam_account(userID, steamID) is not None:
         found = False
-        if(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Tracked Games").child(gameID).get().val() != None):
+        if db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Tracked Games").child(gameID).get().val() is not None:
             found = True
             print(gameID + " is being tracked!")
         else:
