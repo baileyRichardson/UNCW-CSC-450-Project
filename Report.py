@@ -1,27 +1,28 @@
 # Adan Narvaez Munguia
-def get_user_id(user) -> int:
-    """
-    This method returns the userid for a specified user.
-    :param user: the User you want to get the ID for.
-    :return: The user's ID number or 0 if the user does not exist.
-    """
-    user = 0
-    return 0
+from Playtime import Playtime
 
 
-def report_data(user) -> list[str]:
-    """
-    This method passes a report to the notification component.
-    :param user: the User the report is for.
-    :return: A report as an array of JSON strings.
-    """
-    user = 0
-    return ["report"]
+class Report():
+    def __init__(self, user):
+        """
+        Constructor for the Report class.
+        :param user:
+        """
+        self.steam_accounts = []
+        # Going to get steam accounts from database and store them in user_list
+        user_list = []
+        for account in user_list:
+            self.steam_accounts.append(Playtime(account))
 
-
-def hello() -> str:
-    """
-    This method says hello :)
-    :return: hi
-    """
-    return "Hello from Component Report"
+    def list_steam_accounts(self) -> list:
+        """
+        Lists the display names of all of a user's steam accounts.
+        :return: The display names as a list of strings.
+        """
+        if len(self.steam_accounts) == 0:
+            print("No Steam Accounts are linked!")
+            return []
+        display_name_list = []
+        for account in self.steam_accounts:
+            display_name_list.append(account.get_display_name())
+        return display_name_list

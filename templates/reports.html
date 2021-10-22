@@ -5,6 +5,10 @@
 </head>
 {% block content %}
 <body>
-    <h1>This is a placeholder for the reports page.</h1>
+    {% if accountLinked %}
+        {# Code here #}
+    {% else %}
+        <p>No Steam accounts are linked to this account.</p>
+    {% endif %}
 </body>
 {% endblock %}
