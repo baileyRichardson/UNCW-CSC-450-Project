@@ -77,7 +77,7 @@ def settings():
 def forgotPassword():
     if request.method == "POST":
         email = request.form["name"]
-        authentication.send_password_reset_email("brr4103@uncw.edu")
+        authentication.send_password_reset_email(email)
 
     return render_template("forgotPassword.html")
 
