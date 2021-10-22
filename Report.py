@@ -16,20 +16,19 @@ class Report():
         Constructor for the Report class.
         :param user:
         """
+        self.user = user
         self.steam_accounts = []
         # Going to get steam accounts from database and store them in user_list
         user_list = []
         for account in user_list:
             self.steam_accounts.append(Playtime(account))
 
-
-    def report_data(user) -> List[str]:
+    def report_data(self) -> List[str]:
         """
         This method passes a report to the notification component.
-        :param user: the User the report is for.
         :return: A report as an array of JSON strings.
         """
-        user = 0
+        self.user = 0
         return ["report"]
 
     def list_steam_accounts(self) -> list:
