@@ -9,6 +9,8 @@ import Report
 import pyrebase
 from flask import json
 
+import DatabaseTest
+
 app = Flask(__name__)
 
 # Firebase Authentication setup
@@ -60,6 +62,7 @@ def login():
 @app.route('/dashboard/')
 def dashboard():
     username = "John Smith"
+    DatabaseTest.test("000000002",12345)
     return render_template("dashboard.html", user=username)
 
 
@@ -71,6 +74,26 @@ def reports():
 @app.route('/settings/')
 def settings():
     return render_template("settings.html")
+
+
+@app.route('/settingSteamAccount')
+def settingSteamAccount():
+    return render_template("settingSteamAccount.html")
+
+
+@app.route("/settingNotifications")
+def settingNotifications():
+    return render_template("settingNotifications.html")
+
+
+@app.route("/settingPlaytimeTracking")
+def settingPlaytimeTracking():
+    return render_template("settingPlaytimeTracking.html")
+
+
+@app.route("/settingWatchList")
+def settingWatchList():
+    return render_template("settingWatchList.html")
 
 
 @app.route('/forgotPass/', methods=["GET", "POST"])
