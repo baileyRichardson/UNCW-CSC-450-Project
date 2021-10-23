@@ -1,7 +1,6 @@
 # Adan Narvaez Munguia
-from typing import List
 from Playtime import Playtime
-from User import User
+import Database
 
 
 class ReportException(Exception):
@@ -10,26 +9,20 @@ class ReportException(Exception):
         super().__init__(self.message)
 
 
-class Report():
-    def __init__(self, user):
+class Report:
+    def __init__(self, user=str):
         """
         Constructor for the Report class.
-        :param user:
+        :param user: User ID as a string.
         """
         self.user = user
         self.steam_accounts = []
-        # Going to get steam accounts from database and store them in user_list
-        user_list = []
+        user_list = Database.list_of_steam_accounts(user)
+        steam_list = []
+        for key in user_list:
+            steam_list.append(key)
         for account in user_list:
             self.steam_accounts.append(Playtime(account))
-
-    def report_data(self) -> List[str]:
-        """
-        This method passes a report to the notification component.
-        :return: A report as an array of JSON strings.
-        """
-        self.user = 0
-        return ["report"]
 
     def list_steam_accounts(self) -> list:
         """
@@ -43,25 +36,34 @@ class Report():
             display_name_list.append(account.get_display_name())
         return display_name_list
 
-    def get_games(self, account: Playtime) -> List[str]:
+    def get_games(self, account: Playtime) -> dict[str]:
+        """
+        Retrieves games and their information for the report.
+        :param account: The specified account.
+        :return: Dictionary of the user's games. The name of the game is the key. The item is a List containing the game's total playtime, app id, and icon image URL.
+        """
         try:
-            return account.get_games()
+            return account.get_game_info()
         except SyntaxError:
-            return ["No games Found on this account. It may be private."]
-
-    def get_playtimes(self, account: Playtime) -> List[str]:
-        try:
-            return account.get_playtime()
-        except SyntaxError:
-            return ["0"]
+            return {"Error": "No games Found on this account. It may be private."}
 
     def generate_report_text(self):
-        report_text = [self.list_steam_accounts()]
+        report_text = []
+        account_names = [self.list_steam_accounts()]
+        account_index = 0
         steam_games = []
-        steam_playtimes = []
         for account in self.steam_accounts:
+            steam_games.append(account_names[account_index][0])
+            account_index += 1
             steam_games.append(self.get_games(account))
-            steam_playtimes.append(self.get_playtimes(account))
-        report_text.append(steam_games)
-        report_text.append(steam_playtimes)
+            report_text.append(steam_games)
         return report_text
+
+
+def test():
+    user_id = "10000"
+    # steam_id = 76561198065124435
+    # Database.create_user(user_id, "test@fakemail.edu")
+    # Database.add_steam_account(user_id, steam_id)
+    user_report = Report(user_id)
+    print(user_report.generate_report_text())
