@@ -5,7 +5,7 @@ import Playtime
 import steamSetting
 import userManger
 import accountSettings
-import Report
+from Report import Report
 import pyrebase
 from flask import json
 
@@ -68,7 +68,10 @@ def dashboard():
 
 @app.route('/reports/')
 def reports():
-    return render_template("reports.html")
+    user_id = "10000"
+    userReport = Report(user_id)
+    userReportText = userReport.generate_report_text()
+    return render_template("reports.html", reportText=userReportText, accountLinked=True)
 
 
 @app.route('/settings/')
