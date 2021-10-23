@@ -75,9 +75,7 @@ class Playtime:
             games = player_service.get_owned_games(self.steam_id)['response']['games']
             return games
         except:
-            print("Steam ID is invalid")
-            return []
-            # raise SyntaxError("Steam id is invalid")
+            raise SyntaxError("Steam id is invalid")
 
     def get_games(self) -> list:
         """
@@ -89,9 +87,7 @@ class Playtime:
             games = player_service.get_owned_games(self.steam_id)['response']['games']
             return list((i['name'] for i in games))
         except:
-            print("Steam id is invalid")
-            return []
-            # raise SyntaxError("Steam id is invalid")
+            raise SyntaxError("Steam ID is invalid!")
 
     def get_playtime(self) -> list:
         """

@@ -42,3 +42,26 @@ class Report():
         for account in self.steam_accounts:
             display_name_list.append(account.get_display_name())
         return display_name_list
+
+    def get_games(self, account: Playtime) -> List[str]:
+        try:
+            return account.get_games()
+        except SyntaxError:
+            return ["No games Found on this account. It may be private."]
+
+    def get_playtimes(self, account: Playtime) -> List[str]:
+        try:
+            return account.get_playtime()
+        except SyntaxError:
+            return ["0"]
+
+    def generate_report_text(self):
+        report_text = [self.list_steam_accounts()]
+        steam_games = []
+        steam_playtimes = []
+        for account in self.steam_accounts:
+            steam_games.append(self.get_games(account))
+            steam_playtimes.append(self.get_playtimes(account))
+        report_text.append(steam_games)
+        report_text.append(steam_playtimes)
+        return report_text
