@@ -16,7 +16,7 @@ import steamspypi
 
 
 class Playtime:
-    def __init__(self, user_id: int, app_id: int):
+    def __init__(self, user_id: int):  # , app_id: int):
         """
         This is the constructor for the class.
         It retrieves the user's profile and sets it as a class attribute.
@@ -24,7 +24,6 @@ class Playtime:
         """
         self.steam_api_key = '25F01C7C51803E91E331CBAD669F542C'
         self.steam_id = user_id
-        self.app_id = app_id
         try:
             self.user_profile = profiles.get_user_profile(user_id)
             if self.user_profile.primaryclanid:
@@ -79,10 +78,10 @@ class Playtime:
         try:
             data_request = dict()
             data_request['request'] = 'appdetails'
-            appID = str(self.app_id)
+            appID = str(app_id)
             data_request['appid'] = appID
             data = steamspypi.download(data_request)  # steamspypi's download function is already checking if the
-            return data  # request is valid, and also attempts to repair it.
+            return data                               # request is valid, and also attempts to repair it.
         except:
             raise SyntaxError("App_id is invalid")
 
