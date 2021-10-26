@@ -5,9 +5,11 @@ import Playtime
 import steamSetting
 import userManger
 import accountSettings
-import Report
+from Report import Report
 import pyrebase
 from flask import json
+
+import DatabaseTest
 
 app = Flask(__name__)
 
@@ -60,17 +62,41 @@ def login():
 @app.route('/dashboard/')
 def dashboard():
     username = "John Smith"
+    DatabaseTest.test("000000002",12345)
     return render_template("dashboard.html", user=username)
 
 
 @app.route('/reports/')
 def reports():
-    return render_template("reports.html")
+    user_id = "10000"
+    userReport = Report(user_id)
+    userReportText = userReport.generate_report_text()
+    return render_template("reports.html", reportText=userReportText, accountLinked=True)
 
 
 @app.route('/settings/')
 def settings():
     return render_template("settings.html")
+
+
+@app.route('/settingSteamAccount')
+def settingSteamAccount():
+    return render_template("settingSteamAccount.html")
+
+
+@app.route("/settingNotifications")
+def settingNotifications():
+    return render_template("settingNotifications.html")
+
+
+@app.route("/settingPlaytimeTracking")
+def settingPlaytimeTracking():
+    return render_template("settingPlaytimeTracking.html")
+
+
+@app.route("/settingWatchList")
+def settingWatchList():
+    return render_template("settingWatchList.html")
 
 
 @app.route('/forgotPass/', methods=["GET", "POST"])
