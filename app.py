@@ -73,8 +73,8 @@ def settings():
     return render_template("settings.html")
 
 
-@app.route('/changePass/', methods=["GET", "POST"])
-def changePassword():
+@app.route('/forgotPass/', methods=["GET", "POST"])
+def forgotPassword():
     if request.method == "POST":
         try:
             email = request.form["name"]
@@ -87,8 +87,8 @@ def changePassword():
                 error_text = "We have no record of a Steam Monitor account using this email address."
             else:
                 error_text = "Whoops, looks like we have an unaccounted for error: " + error
-            return render_template("changePassword.html", errors=error_text)
-    return render_template("changePassword.html")
+            return render_template("forgotPassword.html", errors=error_text)
+    return render_template("forgotPassword.html")
 
 
 @app.route('/signup/', methods=["GET", "POST"])
