@@ -1,7 +1,6 @@
 """
 Author: William Ebright
 """
-# import Report  #for later
 from steamwebapi import profiles
 from steamwebapi.api import ISteamUser, IPlayerService
 
@@ -96,7 +95,6 @@ class Playtime:
     def get_playtime(self) -> list:
         """
         This function returns a steam users playtime
-        :param game_name: game for which we are getting the playtime of.  #future
         :return: The steam playtime, raises exception if user does not exist.
         """
         steam_api_key = self.steam_api_key
@@ -112,7 +110,6 @@ class Playtime:
         """
         This function returns a steam users playtime
         :param steam_api_key: Developer key to access API.
-        :param game_name: game for which we are getting the playtime of.  #future
         :param steam_id: user ID for whom we want to get playtime for.
         :return: The steam playtime, raises exception if user does not exist.
         """
@@ -132,10 +129,6 @@ class Playtime:
     Notes:
     In order to track games, games tracked would have to be stored in a txt file (in database?) <-- for later
     * Tracking specific games should be in next sprint?
-
-    Sprint 1 for Playtime then = user shown list of games on steam account with total playtime with each + total overall
-
-    main currently set up to show off steamAPI calls for Sprint 1!
     
     Notes from Adan:
     Games being tracked are being called into a list. We can use this to store JSON into the database.
