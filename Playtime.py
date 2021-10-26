@@ -133,6 +133,7 @@ class Playtime:
         try:
             data_request = dict()
             data_request['request'] = 'appdetails'
+            appID = str(appID)
             data_request['appid'] = appID
             data = steamspypi.download(data_request)
             return data
