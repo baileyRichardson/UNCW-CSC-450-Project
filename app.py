@@ -96,22 +96,38 @@ def settings():
 
 @app.route('/settingSteamAccount')
 def settingSteamAccount():
-    return render_template("settingSteamAccount.html")
+    try:
+        print(session["user"])
+        return render_template("settingSteamAccount.html")
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route("/settingNotifications")
 def settingNotifications():
-    return render_template("settingNotifications.html")
+    try:
+        print(session["user"])
+        return render_template("settingNotifications.html")
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route("/settingPlaytimeTracking")
 def settingPlaytimeTracking():
-    return render_template("settingPlaytimeTracking.html")
+    try:
+        print(session["user"])
+        return render_template("settingPlaytimeTracking.html")
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route("/settingWatchList")
 def settingWatchList():
-    return render_template("settingWatchList.html")
+    try:
+        print(session["user"])
+        return render_template("settingWatchList.html")
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route('/forgotPass/', methods=["GET", "POST"])
