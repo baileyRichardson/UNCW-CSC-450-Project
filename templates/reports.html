@@ -6,7 +6,36 @@
 {% block content %}
 <body>
     {% if accountLinked %}
-        {# Code here #}
+        {% for account in reportText %}
+            <h2>Account: {{account[0]}}</h2>
+            <table>
+                <tr>
+                    <th>
+
+                    </th>
+                    <th>
+                        Game
+                    </th>
+                    <th>
+                        Total Time Played (Minutes)
+                    </th>
+                </tr>
+                {% for game in account[1] %}
+                <tr>
+                    <td>
+                        <img src="http://media.steampowered.com/steamcommunity/public/images/apps/{{account[1][game][1]}}/{{account[1][game][2]}}.jpg"
+                             alt="">
+                    </td>
+                    <td>
+                        {{game}}
+                    </td>
+                    <td>
+                        {{account[1][game][0]}}
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endfor %}
     {% else %}
         <p>No Steam accounts are linked to this account.</p>
     {% endif %}
