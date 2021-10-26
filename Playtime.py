@@ -12,7 +12,6 @@ from steamwebapi import profiles
 from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, ISteamWebAPIUtil, SteamCommunityXML
 import steamspypi
 
-
 # from steam.steamid import SteamID  # Possibly useful later; Ignore for now.
 
 
