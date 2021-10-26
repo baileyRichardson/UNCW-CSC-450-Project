@@ -1,5 +1,7 @@
 import requests
 from flask import *
+
+import Database
 import Notifications
 import Playtime
 import steamSetting
@@ -62,7 +64,7 @@ def login():
 @app.route('/dashboard/')
 def dashboard():
     username = "John Smith"
-    DatabaseTest.test("000000002",12345)
+    DatabaseTest.test("000000002", 12345)
     return render_template("dashboard.html", user=username)
 
 
@@ -73,12 +75,13 @@ def reports():
 
 @app.route('/settings/')
 def settings():
-    return render_template("settings.html")
+    return render_template("settingSteamAccount.html")
 
 
 @app.route('/settingSteamAccount')
 def settingSteamAccount():
-    return render_template("settingSteamAccount.html")
+    accounts = Database.list_of_steam_accounts("000000002")
+    return render_template("settingSteamAccount.html", results=accounts)
 
 
 @app.route("/settingNotifications")

@@ -361,6 +361,7 @@ def list_of_steam_accounts(userID: str):
         result = db.child("Users/"+userID+"/Steam Accounts").child().get().val()
         for key in result.keys():
             accountList.append(key)
+        print(accountList)
         return accountList
     else:
         return None
