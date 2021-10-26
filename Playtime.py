@@ -12,6 +12,7 @@ from steamwebapi import profiles
 from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, ISteamWebAPIUtil, SteamCommunityXML
 import steamspypi
 
+
 # from steam.steamid import SteamID  # Possibly useful later; Ignore for now.
 
 
@@ -82,7 +83,7 @@ class Playtime:
             appID = str(self.app_id)
             data_request['appid'] = appID
             data = steamspypi.download(data_request)  # steamspypi's download function is already checking if the
-            return data                               # request is valid, and also attempts to repair it.
+            return data  # request is valid, and also attempts to repair it.
         except:
             raise SyntaxError("App_id is invalid")
 
@@ -101,7 +102,7 @@ class Playtime:
             print("Steam ID is invalid")
             return []
             # raise SyntaxError("Steam id is invalid")
-            
+
     def get_app_details_brute(app_id: int) -> dict:
         \"""
         THIS IS ALSO BACKUP METHOD; is another method that should function identically to get_app_details
@@ -113,4 +114,3 @@ class Playtime:
         return json.loads(response.text)
 
     """
-
