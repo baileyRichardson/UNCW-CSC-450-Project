@@ -102,9 +102,18 @@ def settingWatchList():
 @app.route('/forgotPass/', methods=["GET", "POST"])
 def forgotPassword():
     if request.method == "POST":
-        email = request.form["name"]
-        authentication.send_password_reset_email(email)
-
+        try:
+            email = request.form["name"]
+            authentication.send_password_reset_email(email)
+            return render_template("loginPage.html")
+        except requests.HTTPError as exception:
+            error_json = exception.args[1]
+            error = json.loads(error_json)["error"]["message"]
+            if error == "INVALID_EMAIL":
+                error_text = "We have no record of a Steam Monitor account using this email address."
+            else:
+                error_text = "Whoops, looks like we have an unaccounted for error: " + error
+            return render_template("forgotPassword.html", errors=error_text)
     return render_template("forgotPassword.html")
 
 
@@ -115,7 +124,7 @@ def signup():
         password = request.form["pass"]
         try:
             authentication.create_user_with_email_and_password(email, password)
-            return render_template("dashboard.html")
+            return render_template("loginPage.html")
         except requests.HTTPError as exception:
             error_json = exception.args[1]
             error = json.loads(error_json)["error"]["message"]
