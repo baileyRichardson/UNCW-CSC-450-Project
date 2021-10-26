@@ -2,7 +2,10 @@
 Author: William Ebright
 """
 from steamwebapi import profiles
-from steamwebapi.api import ISteamUser, IPlayerService
+from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, ISteamWebAPIUtil, SteamCommunityXML
+import steamspypi
+
+# from steam.steamid import SteamID <--- Might be useful?
 
 
 class Playtime:
@@ -122,13 +125,45 @@ class Playtime:
             print("Steam id is invalid")
             return []
 
-        # for i in (x for x in games if x['name'] == game_name):  # game is owned
-        #     return True
+    def get_app_details(self, appID: str) -> list:
+        """
+        This function returns details for an application's ID
+        :return: The steam playtime, raises exception if user does not exist.
+        """
+        try:
+            data_request = dict()
+            data_request['request'] = 'appdetails'
+            data_request['appid'] = appID
+            data = steamspypi.download(data_request)
+            return data
+        except:
+            print("Steam id is invalid")
+            return []
+
+    """
+    def get_game_stats(self, appID: int, count: int, names: list, steam_api_key: str) -> list:
+        \"""
+        Get the global stats fir a given game.
+        :return: Stats for a given game
+        \"""
+        try:
+            service_stats = ISteamUserStats(steam_api_key=self.steam_api_key)
+            game_stats = service_stats.get_global_stats_for_game(appID, count, names, )['response']['games']
+            return game_stats
+        except:
+            print("Steam ID is invalid")
+            return []
+            # raise SyntaxError("Steam id is invalid")
+
+    """
 
     """
     Notes:
     In order to track games, games tracked would have to be stored in a txt file (in database?) <-- for later
     * Tracking specific games should be in next sprint?
+    
+    * For get_playtime and get_total_playtime the use of self is not present; not updating until asking adan as to not
+    break report.
     
     Notes from Adan:
     Games being tracked are being called into a list. We can use this to store JSON into the database.
