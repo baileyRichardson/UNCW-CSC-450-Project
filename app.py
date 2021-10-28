@@ -207,6 +207,7 @@ def signup():
         password = request.form["pass"]
         try:
             authentication.create_user_with_email_and_password(email, password)
+            userManger.userManager(email)
             return render_template("loginPage.html")
         except requests.HTTPError as exception:
             error_json = exception.args[1]
