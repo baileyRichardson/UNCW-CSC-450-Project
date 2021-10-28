@@ -1,5 +1,8 @@
 import requests
 from flask import *
+
+import Database
+import DatabaseUse
 import Notifications
 import Playtime
 import steamSetting
@@ -62,7 +65,7 @@ def login():
 @app.route('/dashboard/')
 def dashboard():
     username = "John Smith"
-    DatabaseTest.test("000000002",12345)
+    DatabaseTest.test("test@gmail", 12345)
     return render_template("dashboard.html", user=username)
 
 
@@ -74,29 +77,62 @@ def reports():
     return render_template("reports.html", reportText=userReportText, accountLinked=True)
 
 
-@app.route('/settings/')
-def settings():
-    return render_template("settings.html")
+##@app.route('/settings/')
+##def settings():
+##   return render_template("settingSteamAccount.html", results=Database.list_of_steam_accounts("test@gmail"))
 
 
-@app.route('/settingSteamAccount')
+@app.route('/settingSteamAccount', methods=["GET", "POST"])
 def settingSteamAccount():
-    return render_template("settingSteamAccount.html")
+    accounts = Database.list_of_steam_accounts("test@gmail")
+    limits = []
+    for item in accounts:
+        limits.append(Database.get_playtime_limit("test@gmail", item))
+    if request.method == "POST":
+        default_value = 'off'
+        # iterate through steam accounts and get input data for each account
+        for account in accounts:
+            steam_account = request.form.get("steamAccount"+account, default_value)
+            prev_limit = Database.get_playtime_limit("test@gmail",steam_account)
+            auto = request.form.get("auto"+account, default_value)
+            limit = request.form.get("limit"+account, "null")
+            print("limit is"+limit+"with type:"+str(type(limit)))
+            print(prev_limit)
+            remove = request.form.get("confirmRemove"+account, default_value)
+            DatabaseUse.update_steam_account_page("test@gmail", steam_account, auto, remove, limit)
+        new_accounts = Database.list_of_steam_accounts("test@gmail")
+        new_limits = []
+        for item in new_accounts:
+            new_limits.append(Database.get_playtime_limit("test@gmail",item))
+        render_template("settingSteamAccount.html", results=new_accounts, limits=new_limits)
+    return render_template("settingSteamAccount.html", results=accounts, limits=limits)
 
 
 @app.route("/settingNotifications")
 def settingNotifications():
-    return render_template("settingNotifications.html")
+    email = Database.get_email("test@gmail")
+    return render_template("settingNotifications.html", email=email)
 
 
 @app.route("/settingPlaytimeTracking")
 def settingPlaytimeTracking():
-    return render_template("settingPlaytimeTracking.html")
+    steamAccounts = Database.list_of_steam_accounts("test@gmail")
+    nested = []
+    for item in steamAccounts:
+        nested.append(Database.list_of_tracked_games("test@gmail", item))
+    print(nested)
+    return render_template("settingPlaytimeTracking.html", steam=steamAccounts, nested=nested)
 
 
 @app.route("/settingWatchList")
 def settingWatchList():
-    return render_template("settingWatchList.html")
+    steamAccounts = Database.list_of_steam_accounts("test@gmail")
+    nested = []
+    all_prices = []
+    for item in steamAccounts:
+        nested.append(Database.list_of_watched_games("test@gmail", item))
+    print(nested)
+    return render_template("settingWatchList.html", steam=steamAccounts, nested=nested)
 
 
 @app.route('/forgotPass/', methods=["GET", "POST"])

@@ -1,12 +1,52 @@
-{% extends "header.html" %}
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Settings Steam Account{% endblock %}</title>
+    
+    <style>
+        
+        .collapsible{
+            background-color: #eee;
+            color: #444;
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            text-align: left;
+            border: none;
+            outline: none;
+            font-size: 15px;
+            transition: 0.4s;
+        }
+        
+        .active, .collapsible:hover{
+            background-color: #ccc;
+        }
+        
+        .panel{
+            padding: 0 18px;
+            background-color: white;
+            display: none;
+            overflow: hidden;
+        }
+        
+        .hid{
+            display:none;
+        }
+        
+    </style>
 </head>
-{% block content %}
 <body>
+    <header>
+        <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" alt="Steam Monitor Logo">
+        <ul class ="navmenu">
+            <li><a href="{{ url_for('dashboard') }}">Home</a></li>
+            <li><a href="{{ url_for('reports') }}">Reports</a></li>
+            <li><a href="{{ url_for('settingSteamAccount') }}">Settings</a></li>
+            <!--add object for logout page here-->
+        </ul>
+    </header>
     <h1>This is a placeholder for the steam account settings.</h1>
-    <header></header>
     <nav>
         <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
         <li><a href="{{ url_for('settingPlaytimeTracking') }}">Playtime Tracking</a></li>
@@ -14,15 +54,85 @@
         <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
     </nav>
     <main>
-        <h1>Link a steam account:</h1>
-        <form>
-            <fieldset>
-                <label for="Submit"></label>
-                <input type="submit" name="submit" id="Submit" value="Steam Placeholder Button">
-            </fieldset>
-        </form>
-
+        <table>
+            <thead>Currently Linked Accounts</thead>
+            <tbody>
+                {% for result in results %}
+                <form method="post">
+                <tr>
+                    <td>{{result}}</td>
+                </tr>
+                <tr>
+                    <div class="hid">
+                        <input type="text" name="steamAccount{{result}}" id="Limit" value={{result}}><br>
+                    </div>
+                </tr>
+                <tr>
+                    <td>
+                        <button type="button" class="collapsible">More:</button>
+                        <div class="panel">
+                            <table>
+                                <thead>Options</thead>
+                                <tbody>
+                                    <tr>
+                                        <button type="button" class="collapsible">Remove Account:</button>
+                                        <div class="panel">
+                                            <input type="checkbox" name="confirmRemove{{result}}" id="ConfirmRemove">Confirm
+                                        </div>
+                                    </tr>
+                                    <tr>
+                                        <td>Current Time Limit: {{limits[loop.index-1]}} hours</td>
+                                        <td>
+                                            <input type="text" name="limit{{result}}" id="Limit" placeholder="Enter time limit in hours"><br>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                        <input type="checkbox" name = "auto{{result}}" id="Auto">Auto Track games as they're installed
+                                        <br>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td>
+                                            <input type="submit" name="submit" id="Submit" value="Submit changes" class="button">
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <form>
+                        <fieldset>
+                            <label for="Submit"></label>
+                            <input type="button" id="Submit" value="Add Steam Account" class="button">
+                        </fieldset>
+                    </form>
+                </tr>
+                </form>
+            </tbody>
+        </table>
     </main>
+    <script>
+        var col = document.getElementsByClassName("collapsible");
+        var i;
+        
+        for (i = 0; i < col.length; i++){
+            col[i].addEventListener("click",function(){
+                this.classList.toggle("active");
+                var panel = this.nextElementSibling;
+                if (panel.style.display === "block"){
+                    panel.style.display = "none";
+                } else{
+                    panel.style.display = "block";
+                }
+            });
+        }
+    </script>
     <footer></footer>
 </body>
-{% endblock %}
+</html>
