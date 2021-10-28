@@ -11,11 +11,14 @@ import accountSettings
 from Report import Report
 import pyrebase
 from flask import json
-
+import os
+from werkzeug.exceptions import HTTPException
 import DatabaseTest
 
-app = Flask(__name__)
 
+app = Flask(__name__)
+key = os.urandom(12).hex()
+app.secret_key = key
 # Firebase Authentication setup
 firebaseConfig = {"apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
                   "authDomain": "csc-450-group-5-project.firebaseapp.com",
@@ -29,14 +32,16 @@ firebaseConfig = {"apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
 firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
 
-
 @app.route('/', methods=["GET", "POST"])
 def login():
     if request.method == "POST":
         email = request.form["name"]
         password = request.form["pass"]
         try:
-            authentication.sign_in_with_email_and_password(email, password)
+            user = authentication.sign_in_with_email_and_password(email, password)
+            user = authentication.refresh(user['refreshToken'])
+            user_token = user["idToken"]
+            session["user"] = user_token
             return render_template("dashboard.html")
         except requests.HTTPError as exception:
             error_json = exception.args[1]
@@ -64,17 +69,36 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
-    username = "John Smith"
-    DatabaseTest.test("test@gmail", 12345)
-    return render_template("dashboard.html", user=username)
+    try:
+        print(session["user"])
+        username = "John Smith"
+        DatabaseTest.test("test@gmail", 12345)
+        return render_template("dashboard.html", user=username)
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route('/reports/')
 def reports():
-    user_id = "10000"
-    userReport = Report(user_id)
-    userReportText = userReport.generate_report_text()
-    return render_template("reports.html", reportText=userReportText, accountLinked=True)
+    try:
+        print(session["user"])
+        user_id = "10000"
+        userReport = Report(user_id)
+        userReportText = userReport.generate_report_text()
+        return render_template("reports.html", reportText=userReportText, accountLinked=True)
+    except KeyError:
+        return render_template("loginPage.html")
+
+
+@app.route('/settings/')
+def settings():
+    try:
+        print(session["user"])
+        return render_template("settings.html")
+    except KeyError:
+        return render_template("loginPage.html")
+
+    
 
 
 ##@app.route('/settings/')
@@ -82,57 +106,80 @@ def reports():
 ##   return render_template("settingSteamAccount.html", results=Database.list_of_steam_accounts("test@gmail"))
 
 
+
 @app.route('/settingSteamAccount', methods=["GET", "POST"])
 def settingSteamAccount():
-    accounts = Database.list_of_steam_accounts("test@gmail")
-    limits = []
-    for item in accounts:
-        limits.append(Database.get_playtime_limit("test@gmail", item))
-    if request.method == "POST":
-        default_value = 'off'
-        # iterate through steam accounts and get input data for each account
-        for account in accounts:
-            steam_account = request.form.get("steamAccount"+account, default_value)
-            prev_limit = Database.get_playtime_limit("test@gmail",steam_account)
-            auto = request.form.get("auto"+account, default_value)
-            limit = request.form.get("limit"+account, "null")
-            print("limit is"+limit+"with type:"+str(type(limit)))
-            print(prev_limit)
-            remove = request.form.get("confirmRemove"+account, default_value)
-            DatabaseUse.update_steam_account_page("test@gmail", steam_account, auto, remove, limit)
-        new_accounts = Database.list_of_steam_accounts("test@gmail")
-        new_limits = []
-        for item in new_accounts:
-            new_limits.append(Database.get_playtime_limit("test@gmail",item))
-        render_template("settingSteamAccount.html", results=new_accounts, limits=new_limits)
-    return render_template("settingSteamAccount.html", results=accounts, limits=limits)
+    try:
+        print(session["user"])
+        accounts = Database.list_of_steam_accounts("test@gmail")
+        limits = []
+        for item in accounts:
+            limits.append(Database.get_playtime_limit("test@gmail", item))
+        if request.method == "POST":
+            default_value = 'off'
+            # iterate through steam accounts and get input data for each account
+            for account in accounts:
+                steam_account = request.form.get("steamAccount"+account, default_value)
+                prev_limit = Database.get_playtime_limit("test@gmail",steam_account)
+                auto = request.form.get("auto"+account, default_value)
+                limit = request.form.get("limit"+account, "null")
+                print("limit is"+limit+"with type:"+str(type(limit)))
+                print(prev_limit)
+                remove = request.form.get("confirmRemove"+account, default_value)
+                DatabaseUse.update_steam_account_page("test@gmail", steam_account, auto, remove, limit)
+            new_accounts = Database.list_of_steam_accounts("test@gmail")
+            new_limits = []
+            for item in new_accounts:
+                new_limits.append(Database.get_playtime_limit("test@gmail",item))
+            render_template("settingSteamAccount.html", results=new_accounts, limits=new_limits)
+        return render_template("settingSteamAccount.html", results=accounts, limits=limits)
+    except KeyError:
+        return render_template("loginPage.html")
+
 
 
 @app.route("/settingNotifications")
 def settingNotifications():
-    email = Database.get_email("test@gmail")
-    return render_template("settingNotifications.html", email=email)
+
+    try:
+        print(session["user"])
+        email = Database.get_email("test@gmail")
+        return render_template("settingNotifications.html", email=email)
+    except KeyError:
+        return render_template("loginPage.html")
+
 
 
 @app.route("/settingPlaytimeTracking")
 def settingPlaytimeTracking():
-    steamAccounts = Database.list_of_steam_accounts("test@gmail")
-    nested = []
-    for item in steamAccounts:
-        nested.append(Database.list_of_tracked_games("test@gmail", item))
-    print(nested)
-    return render_template("settingPlaytimeTracking.html", steam=steamAccounts, nested=nested)
+
+    try:
+        print(session["user"])
+        steamAccounts = Database.list_of_steam_accounts("test@gmail")
+        nested = []
+        for item in steamAccounts:
+            nested.append(Database.list_of_tracked_games("test@gmail", item))
+        print(nested)
+        return render_template("settingPlaytimeTracking.html", steam=steamAccounts, nested=nested)
+    except KeyError:
+        return render_template("loginPage.html")
+
 
 
 @app.route("/settingWatchList")
 def settingWatchList():
-    steamAccounts = Database.list_of_steam_accounts("test@gmail")
-    nested = []
-    all_prices = []
-    for item in steamAccounts:
-        nested.append(Database.list_of_watched_games("test@gmail", item))
-    print(nested)
-    return render_template("settingWatchList.html", steam=steamAccounts, nested=nested)
+    try:
+        print(session["user"])
+        steamAccounts = Database.list_of_steam_accounts("test@gmail")
+        nested = []
+        all_prices = []
+        for item in steamAccounts:
+            nested.append(Database.list_of_watched_games("test@gmail", item))
+        print(nested)
+        return render_template("settingWatchList.html", steam=steamAccounts, nested=nested)
+    except KeyError:
+        return render_template("loginPage.html")
+
 
 
 @app.route('/forgotPass/', methods=["GET", "POST"])
@@ -160,6 +207,7 @@ def signup():
         password = request.form["pass"]
         try:
             authentication.create_user_with_email_and_password(email, password)
+            userManger.userManager(email)
             return render_template("loginPage.html")
         except requests.HTTPError as exception:
             error_json = exception.args[1]
