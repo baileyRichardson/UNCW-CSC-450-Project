@@ -1,13 +1,22 @@
 """
-Author: William Ebright
+Authors: William Ebright, Adan Narvaez Munguia
+Things that must be done:
+- Retrieving Tracked Games - must be done though database (probably)
+- Comparing playtime to last known playtime - must be done though database (probably)
+- Reflecting playtime comparisons that for the purposes of (pardon my français) day/week/month bs
+- Replacing the generic exceptions with more helpful ones  - Do during testing in Lab?
 """
-# import Report  #for later
+import requests
+from flask import json
 from steamwebapi import profiles
-from steamwebapi.api import ISteamUser, IPlayerService
+from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, ISteamWebAPIUtil, SteamCommunityXML
+import steamspypi
+
+# from steam.steamid import SteamID  # Possibly useful later; Ignore for now.
 
 
 class Playtime:
-    def __init__(self, user_id: int):
+    def __init__(self, user_id: int):  # , app_id: int):
         """
         This is the constructor for the class.
         It retrieves the user's profile and sets it as a class attribute.
@@ -32,24 +41,6 @@ class Playtime:
         except:
             self.profileGrabStatus = False
 
-    """ This function is unneeded but I don't want to delete it in case it isn't.
-    def get_player_id(profile_name: str, steam_api_key: str) -> int:
-        \"""
-        This function returns the current user's steam ID using their profile name.
-        :param profile_name: user object for whom we want to get steam id.
-        :param steam_api_key: Developer key to access API.
-        :return: The steam ID of user based on user's username.
-        \"""
-        try:
-            user_info = ISteamUser(steam_api_key=steam_api_key)
-            steamid = user_info.resolve_vanity_url(profile_name)['response']['steamid']
-            return steamid
-        except:
-            print("Steam id is invalid")
-            return 0
-            # raise SyntaxError("Steam id is invalid")
-    """
-
     def get_display_name(self) -> str:
         """
         Get the display name for this Steam Account.
@@ -57,86 +48,67 @@ class Playtime:
         """
         try:
             player_service = ISteamUser(steam_api_key=self.steam_api_key)
-            display_name = player_service.get_player_summaries(self.steam_id)['response']['personaname']
+            display_name = player_service.get_player_summaries(self.steam_id)['response']['players'][0]['personaname']
             return display_name
         except:
-            print("Steam ID is invalid")
-            return "Unknown Steam ID"
-            # raise SyntaxError("Steam id is invalid")
+            raise SyntaxError("Steam id is invalid")
 
-    def get_game_info(self) -> list:
+    def get_game_info(self) -> dict:
         """
-        This function returns a steam users owned games as well as extra information.
-        :return: List of a user's games with related info.
-        """
-
-        try:
-            player_service = IPlayerService(steam_api_key=self.steam_api_key)
-            games = player_service.get_owned_games(self.steam_id)['response']['games']
-            return games
-        except:
-            print("Steam ID is invalid")
-            return []
-            # raise SyntaxError("Steam id is invalid")
-
-    def get_games(self) -> list:
-        """
-        This function returns a steam users owned games.
-        :return: List of a user's games.
+        This function returns a Steam User's Owned Games as well as the games playtime, appID, and image icon URL.
+        :return: Dictionary of the user's games. The name of the game is the key. The item is a List containing the
+                 game's total playtime, app id, and icon image URL.
         """
         try:
             player_service = IPlayerService(steam_api_key=self.steam_api_key)
-            games = player_service.get_owned_games(self.steam_id)['response']['games']
-            return list((i['name'] for i in games))
+            games = player_service.get_owned_games(self.steam_id, include_appinfo=True, include_played_free_games=True)[
+                'response']['games']
+            playtimes = {}
+            for i in games:
+                playtimes[i['name']] = [i['playtime_forever'], i['appid'], i['img_icon_url']]
+            return playtimes
         except:
-            print("Steam id is invalid")
-            return []
-            # raise SyntaxError("Steam id is invalid")
+            raise SyntaxError("Steam id is invalid")
 
-    def get_playtime(self) -> list:
+    def get_app_details(self, app_id: str) -> dict:
         """
-        This function returns a steam users playtime
-        :param game_name: game for which we are getting the playtime of.  #future
-        :return: The steam playtime, raises exception if user does not exist.
-        """
-        steam_api_key = self.steam_api_key
-        try:
-            player_service = IPlayerService(steam_api_key=steam_api_key)
-            games = player_service.get_owned_games(self.steam_id)['response']['games']
-            return list((i['playtime_forever'] for i in games))
-        except:
-            print("Steam id is invalid")
-            return []
-
-    def get_total_playtime(self, steam_id: int, steam_api_key: str) -> list:
-        """
-        This function returns a steam users playtime
-        :param steam_api_key: Developer key to access API.
-        :param game_name: game for which we are getting the playtime of.  #future
-        :param steam_id: user ID for whom we want to get playtime for.
-        :return: The steam playtime, raises exception if user does not exist.
+        This function returns details for an application's ID
+        :return: dictonary of info about a game.
         """
         try:
-            player_service = IPlayerService(steam_api_key=steam_api_key)
-            games = player_service.get_owned_games(steam_id)['response']['games']
-            total_list = list((i['playtime_forever'] for i in games))
-            return total_list
+            data_request = dict()
+            data_request['request'] = 'appdetails'
+            appID = str(app_id)
+            data_request['appid'] = appID
+            data = steamspypi.download(data_request)  # steamspypi's download function is already checking if the
+            return data                               # request is valid, and also attempts to repair it.
         except:
-            print("Steam id is invalid")
-            return []
-
-        # for i in (x for x in games if x['name'] == game_name):  # game is owned
-        #     return True
+            raise SyntaxError("App_id is invalid")
 
     """
-    Notes:
-    In order to track games, games tracked would have to be stored in a txt file (in database?) <-- for later
-    * Tracking specific games should be in next sprint?
+    def get_game_stats(self, appID: int, count: int, names: list, steam_api_key: str) -> list:
+        \"""
+        THIS IS A BACKUP METHOD; should work if steamspypy is no longer an option
+        Get the global stats for a given game.
+        :return: Stats for a given game
+        \"""
+        try:
+            service_stats = ISteamUserStats(steam_api_key=self.steam_api_key)
+            game_stats = service_stats.get_global_stats_for_game(appID, count, names, )['response']['games']
+            return game_stats
+        except:
+            print("Steam ID is invalid")
+            return []
+            # raise SyntaxError("Steam id is invalid")
 
-    Sprint 1 for Playtime then = user shown list of games on steam account with total playtime with each + total overall
+    def get_app_details_brute(app_id: int) -> dict:
+        \"""
+        THIS IS ALSO BACKUP METHOD; is another method that should function identically to get_app_details
+        Get the global stats for a given game.
+        :return: Stats for a given game
+        \"""
+        response = get(f'{config.STEAMSPY_URL}/api.php?request=appdetails&appid={game_id}')
+        response.raise_for_status()
+        return json.loads(response.text)
 
-    main currently set up to show off steamAPI calls for Sprint 1!
-    
-    Notes from Adan:
-    Games being tracked are being called into a list. We can use this to store JSON into the database.
     """

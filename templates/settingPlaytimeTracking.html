@@ -1,4 +1,5 @@
 {% extends "header.html" %}
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Settings Playtime Tracking{% endblock %}</title>
@@ -14,20 +15,52 @@
         <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
     </nav>
     <main>
-        <h1>Select which games you would like to track playtime for:</h1>
-        <form>
-            <fieldset>
-                <legend></legend>
-                <label for="Game">Games:</label>
-                    <select name="game">
-                        <option value="select" id="Game">Select a game</option>
-                        <option value="female" id="Game">GTA V</option>
-                        <option value="male" id="Game">Halo</option>
-                        <option value="other" id="Game">Pong</option>
-                    </select><br>
-            </fieldset>
-        </form>
+        <table>
+            <thead>Currently Tracked Games per Accounts</thead>
+            <tbody>
+                {% for result in steam %}
+                <tr>
+                    <td>
+                        <form>
+                            <fieldset>
+                                <legend>Steam Account: {{result}}</legend>
+                                <table>
+                                    <tr>
+                                        <th>Games being Tracked:</th>
+                                    </tr>
+                                    {% for item in nested[loop.index-1] %}
+                                    <tr>
+                                        <td>{{item}}</td>
+                                        <td>
+                                            <button type="button" class="collapsible">Remove</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <form>
+                                            <fieldset>
+                                                <legend>Select which games you would like to track playtime for:</legend>
+                                                <label for="Game">Games:</label>
+                                                <select name="game">
+                                                    <option value="select" id="Game">Select a game</option>
+                                                    <option value="GTA" id="Game">GTA V</option>
+                                                    <option value="Halo" id="Game">Halo</option>
+                                                    <option value="Pong" id="Game">Pong</option>
+                                                </select><br>
+                                                <button type="button">Add</button>
+                                            </fieldset>
+                                        </form>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </main>
     <footer></footer>
 </body>
+</html>
 {% endblock %}

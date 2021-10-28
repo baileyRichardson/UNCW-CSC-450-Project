@@ -14,19 +14,54 @@
         <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
     </nav>
     <main>
-        <h1>Select which games you would like to watch price for for:</h1>
-        <form>
-            <fieldset>
-                <legend></legend>
-                <label for="Game">Games:</label>
-                    <select name="game">
-                        <option value="select" id="Game">Select a game</option>
-                        <option value="female" id="Game">DOOM</option>
-                        <option value="male" id="Game">Minecraft</option>
-                        <option value="other" id="Game">Civ VI</option>
-                    </select><br>
-            </fieldset>
-        </form>
+        <table>
+            <thead>Currently Watched Games per Accounts</thead>
+            <tbody>
+                {% for result in steam %}
+                <tr>
+                    <td>
+                        <form>
+                            <fieldset>
+                                <legend>Steam Account: {{result}}</legend>
+                                <table>
+                                    <tr>
+                                        <th>Games being Watched:</th>
+                                        <th>Price:</th>
+                                    </tr>
+                                    {% for item in nested[loop.index-1] %}
+                                    <tr>
+                                        <td>{{item[0]}}</td>
+                                        <td>{{item[1]}}</td>
+                                        <td>
+                                            <button type="button">Remove</button>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="newPrice" placeholder="Enter new price in form 00.00">
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    <tr>
+                                        <form>
+                                            <fieldset>
+                                                <legend>Select which games you would like to watch:</legend>
+                                                <label for="Game">Games:</label>
+                                                <input type="text" name="game" placeholder="Enter name of game"><br>
+                                                <button type="button" class="collapsible">Search</button>
+                                                <div class="result">Any games that are found are displayed here
+                                                    <input type="text" name="price" placeholder="Enter price in the form 00.00"><br>
+                                                    <button type="button">Add</button>
+                                                </div>
+                                            </fieldset>
+                                        </form>
+                                    </tr>
+                                </table>
+                            </fieldset>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </main>
     <footer></footer>
 </body>

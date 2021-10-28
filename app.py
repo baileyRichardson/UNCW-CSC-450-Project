@@ -1,11 +1,14 @@
 import requests
 from flask import *
+
+import Database
+import DatabaseUse
 import Notifications
 import Playtime
 import steamSetting
 import userManger
 import accountSettings
-import Report
+from Report import Report
 import pyrebase
 from flask import json
 import os
@@ -69,18 +72,20 @@ def dashboard():
     try:
         print(session["user"])
         username = "John Smith"
-        DatabaseTest.test("000000002",12345)
+        DatabaseTest.test("test@gmail", 12345)
         return render_template("dashboard.html", user=username)
     except KeyError:
         return render_template("loginPage.html")
-
 
 
 @app.route('/reports/')
 def reports():
     try:
         print(session["user"])
-        return render_template("reports.html")
+        user_id = "10000"
+        userReport = Report(user_id)
+        userReportText = userReport.generate_report_text()
+        return render_template("reports.html", reportText=userReportText, accountLinked=True)
     except KeyError:
         return render_template("loginPage.html")
 
@@ -93,49 +98,105 @@ def settings():
     except KeyError:
         return render_template("loginPage.html")
 
+    
 
-@app.route('/settingSteamAccount')
+
+##@app.route('/settings/')
+##def settings():
+##   return render_template("settingSteamAccount.html", results=Database.list_of_steam_accounts("test@gmail"))
+
+
+
+@app.route('/settingSteamAccount', methods=["GET", "POST"])
 def settingSteamAccount():
     try:
         print(session["user"])
-        return render_template("settingSteamAccount.html")
+        accounts = Database.list_of_steam_accounts("test@gmail")
+        limits = []
+        for item in accounts:
+            limits.append(Database.get_playtime_limit("test@gmail", item))
+        if request.method == "POST":
+            default_value = 'off'
+            # iterate through steam accounts and get input data for each account
+            for account in accounts:
+                steam_account = request.form.get("steamAccount"+account, default_value)
+                prev_limit = Database.get_playtime_limit("test@gmail",steam_account)
+                auto = request.form.get("auto"+account, default_value)
+                limit = request.form.get("limit"+account, "null")
+                print("limit is"+limit+"with type:"+str(type(limit)))
+                print(prev_limit)
+                remove = request.form.get("confirmRemove"+account, default_value)
+                DatabaseUse.update_steam_account_page("test@gmail", steam_account, auto, remove, limit)
+            new_accounts = Database.list_of_steam_accounts("test@gmail")
+            new_limits = []
+            for item in new_accounts:
+                new_limits.append(Database.get_playtime_limit("test@gmail",item))
+            render_template("settingSteamAccount.html", results=new_accounts, limits=new_limits)
+        return render_template("settingSteamAccount.html", results=accounts, limits=limits)
     except KeyError:
         return render_template("loginPage.html")
+
 
 
 @app.route("/settingNotifications")
 def settingNotifications():
+
     try:
         print(session["user"])
-        return render_template("settingNotifications.html")
+        email = Database.get_email("test@gmail")
+        return render_template("settingNotifications.html", email=email)
     except KeyError:
         return render_template("loginPage.html")
+
 
 
 @app.route("/settingPlaytimeTracking")
 def settingPlaytimeTracking():
+
     try:
         print(session["user"])
-        return render_template("settingPlaytimeTracking.html")
+        steamAccounts = Database.list_of_steam_accounts("test@gmail")
+        nested = []
+        for item in steamAccounts:
+            nested.append(Database.list_of_tracked_games("test@gmail", item))
+        print(nested)
+        return render_template("settingPlaytimeTracking.html", steam=steamAccounts, nested=nested)
     except KeyError:
         return render_template("loginPage.html")
+
 
 
 @app.route("/settingWatchList")
 def settingWatchList():
     try:
         print(session["user"])
-        return render_template("settingWatchList.html")
+        steamAccounts = Database.list_of_steam_accounts("test@gmail")
+        nested = []
+        all_prices = []
+        for item in steamAccounts:
+            nested.append(Database.list_of_watched_games("test@gmail", item))
+        print(nested)
+        return render_template("settingWatchList.html", steam=steamAccounts, nested=nested)
     except KeyError:
         return render_template("loginPage.html")
+
 
 
 @app.route('/forgotPass/', methods=["GET", "POST"])
 def forgotPassword():
     if request.method == "POST":
-        email = request.form["name"]
-        authentication.send_password_reset_email(email)
-
+        try:
+            email = request.form["name"]
+            authentication.send_password_reset_email(email)
+            return render_template("loginPage.html")
+        except requests.HTTPError as exception:
+            error_json = exception.args[1]
+            error = json.loads(error_json)["error"]["message"]
+            if error == "INVALID_EMAIL":
+                error_text = "We have no record of a Steam Monitor account using this email address."
+            else:
+                error_text = "Whoops, looks like we have an unaccounted for error: " + error
+            return render_template("forgotPassword.html", errors=error_text)
     return render_template("forgotPassword.html")
 
 
@@ -146,7 +207,7 @@ def signup():
         password = request.form["pass"]
         try:
             authentication.create_user_with_email_and_password(email, password)
-            return render_template("dashboard.html")
+            return render_template("loginPage.html")
         except requests.HTTPError as exception:
             error_json = exception.args[1]
             error = json.loads(error_json)["error"]["message"]
