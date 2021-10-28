@@ -7,6 +7,9 @@ def test(username, steamName):
     Database.delete_user(username)
     # creat the new test user
     Database.create_user(username, "test@gmail.com")
+    # get the user
+    print(Database.get_user(username))
+    print(Database.get_email(username))
     # add steam accounts to the new user
     Database.add_steam_account(username, 1)
     Database.add_steam_account(username, steamName)
@@ -18,8 +21,11 @@ def test(username, steamName):
     # get a list of steam accounts
     print(Database.list_of_steam_accounts(username))
     # toggle auto tracking
-    Database.toggle_auto_track(username, steamName)
-    Database.toggle_auto_track(username, steamName)
+    Database.toggle_auto_track(username, steamName, False)
+    Database.toggle_auto_track(username, steamName, True)
+    # toggle shown on Report
+    Database.toggle_on_report(username, steamName, True)
+
     # add a game to be tracked
     Database.add_tracked_game("GTA V", username, steamName)
     Database.add_tracked_game("Portal 2", username, steamName)
@@ -53,9 +59,9 @@ def test(username, steamName):
     # print the total playtime over all games
     print(Database.get_total_playtime(username, steamName))
     # print list of watched games
-    print(Database.list_of_watched_games(username, steamName))
+    print("Watched games:",Database.list_of_watched_games(username, steamName))
     # print list of tracked games
     print(Database.list_of_tracked_games(username, steamName))
     # print list of playtimes
-    print(Database.list_of_playtimes(username, steamName))
+    print(Database.list_of_playtime_games(username, steamName))
     return username

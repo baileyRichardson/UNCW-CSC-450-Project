@@ -64,7 +64,7 @@ def login():
 @app.route('/dashboard/')
 def dashboard():
     username = "John Smith"
-    DatabaseTest.test("000000002", 12345)
+    DatabaseTest.test("test@gmail", 12345)
     return render_template("dashboard.html", user=username)
 
 
@@ -76,30 +76,56 @@ def reports():
     return render_template("reports.html", reportText=userReportText, accountLinked=True)
 
 
-@app.route('/settings/')
-def settings():
-    return render_template("settingSteamAccount.html")
+##@app.route('/settings/')
+##def settings():
+##   return render_template("settingSteamAccount.html", results=Database.list_of_steam_accounts("test@gmail"))
 
 
-@app.route('/settingSteamAccount')
+@app.route('/settingSteamAccount', methods=["GET","POST"])
 def settingSteamAccount():
-    accounts = Database.list_of_steam_accounts("000000002")
-    return render_template("settingSteamAccount.html", results=accounts)
+    accounts = Database.list_of_steam_accounts("test@gmail")
+    limits = []
+    for item in accounts:
+        limits.append(Database.get_playtime_limit("test@gmail",item))
+    print(limits)
+    if request.method == "POST":
+        steam_account = request.form["steamAccount"]
+        auto = request.form["auto"]
+        limit = request.form["limit"]
+        remove = request.form["confirmRemove"]
+        print(auto)
+        print(steam_account)
+        print(limit)
+        print(remove)
+        render_template("settingSteamAccount.html", results=accounts, limits=limits)
+    return render_template("settingSteamAccount.html", results=accounts, limits=limits)
 
 
 @app.route("/settingNotifications")
 def settingNotifications():
-    return render_template("settingNotifications.html")
+    email = Database.get_email("test@gmail")
+    return render_template("settingNotifications.html", email=email)
 
 
 @app.route("/settingPlaytimeTracking")
 def settingPlaytimeTracking():
-    return render_template("settingPlaytimeTracking.html")
+    steamAccounts = Database.list_of_steam_accounts("test@gmail")
+    nested = []
+    for item in steamAccounts:
+        nested.append(Database.list_of_tracked_games("test@gmail", item))
+    print(nested)
+    return render_template("settingPlaytimeTracking.html", steam=steamAccounts, nested=nested)
 
 
 @app.route("/settingWatchList")
 def settingWatchList():
-    return render_template("settingWatchList.html")
+    steamAccounts = Database.list_of_steam_accounts("test@gmail")
+    nested = []
+    all_prices = []
+    for item in steamAccounts:
+        nested.append(Database.list_of_watched_games("test@gmail", item))
+    print(nested)
+    return render_template("settingWatchList.html", steam=steamAccounts, nested=nested)
 
 
 @app.route('/forgotPass/', methods=["GET", "POST"])

@@ -33,7 +33,7 @@ def create_user(userID: str, userEmail: str):
     :return: True for success, False if a user with that ID already exists
     """
     if get_user(userID) is None:
-        new_data = {"Email":userEmail}
+        new_data = {"Email": userEmail}
         db.child('Users').child(userID).update(new_data)
         return True
     else:
@@ -54,6 +54,14 @@ def delete_user(userID: str):
         return False
 
 
+def get_email(userID: str):
+    if get_user(userID) is not None:
+        email = db.child("Users/"+userID).child("Email").get().val()
+        return email
+    else:
+        return None
+
+
 def add_steam_account(userID: str, steamID: int):
     """
     This function creates a new Steam account and associates it with a given user
@@ -63,7 +71,7 @@ def add_steam_account(userID: str, steamID: int):
     :return: True for success, False for failure
     """
     if get_user(userID) is not None:
-        new_data = {"Auto Track": False,"Limit Duration": "week", "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
+        new_data = {"On Report": True,"Auto Track": False,"Limit Duration": "week", "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
         db.child("Users/"+userID+"/Steam Accounts").child(steamID).update(new_data)
         return True
     else:
@@ -113,7 +121,17 @@ def set_limit_duration(userID: str, steamID: int, time: str):
         return False
 
 
-def toggle_auto_track(userID: str, steamID: int):
+def toggle_on_report(userID: str, steamID: int, tog: bool):
+    if get_steam_account(userID, steamID) is not None:
+        db.child("Users/"+userID+"/Steam Accounts/").child(steamID).update({"On Report": tog})
+        print(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("On Report").get().val())
+        return True
+    else:
+        return False
+
+
+
+def toggle_auto_track(userID: str, steamID: int, tog: bool):
     """
     This function toggles whether games will be tracked automatically as they are installed
     :param userID: the associated user
@@ -121,13 +139,8 @@ def toggle_auto_track(userID: str, steamID: int):
     :return: True for success, False for failure
     """
     if get_steam_account(userID, steamID) is not None:
-        toggle = db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("Auto Track").get().val()
-        if toggle is False:
-            toggle = True
-        else:
-            toggle = False
-        db.child("Users/"+userID+"/Steam Accounts/").child(steamID).update({"Auto Track": toggle})
-        print(toggle)
+        db.child("Users/"+userID+"/Steam Accounts/").child(steamID).update({"Auto Track": tog})
+        print(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("Auto Track").get().val())
         return True
     else:
         return False
@@ -260,6 +273,14 @@ def update_watch_game(userID: str, steamID: int, gameID: str, price: float):
         return False
 
 
+def get_watch_game_price(userID: str, steamID: int, gameID: str):
+    if get_steam_account(userID, steamID) is not None:
+        price = db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Watched Games").child(gameID).get().val()
+        return price
+    else:
+        return None
+
+
 def add_watch_game(userID: str, steamID: int, gameID: str, price: float):
     """
     This function adds a game to be watched at a certain price
@@ -378,7 +399,11 @@ def list_of_watched_games(userID: str, steamID: int):
     if get_steam_account(userID, steamID) is not None:
         result = db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)+"/Watched Games").child().get().val()
         for key in result.keys():
-           wgList.append(key)
+            subList = []
+            subList.append(key)
+            price = get_watch_game_price(userID, steamID, key)
+            subList.append(price)
+            wgList.append(subList)
         return wgList
     else:
         return None
@@ -401,7 +426,7 @@ def list_of_tracked_games(userID: str, steamID: int):
         return None
 
 
-def list_of_playtimes(userID: str, steamID: int):
+def list_of_playtime_games(userID: str, steamID: int):
     """
     This function returns a list of global stored playtimes
     :param userID: the associated user
@@ -416,7 +441,6 @@ def list_of_playtimes(userID: str, steamID: int):
         return pList
     else:
         return None
-
 
 
 def check_for_playtime(userID: str, steamID: int, gameID: str):

@@ -10,7 +10,7 @@ class ReportException(Exception):
 
 
 class Report:
-    def __init__(self, user=str):
+    def __init__(self, user: str):
         """
         Constructor for the Report class.
         :param user: User ID as a string.

@@ -14,13 +14,22 @@
         <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
     </nav>
     <main>
-        <h1>Enter the time you want to be allowed to play</h1>
-        <form>
-            <fieldset>
-            <label for="Height"> Limit:</label>
-            <input type="text" name="height" id="Height" placeholder="10 hours"><br>      
-            </fieldset>
-        </form>
+        <table>
+            <thead>Notifications</thead>
+            <tbody>
+                <tr>
+                    <td>Email account: {{email}}</td>
+                    <td>
+                        <form>
+                            <fieldset>
+                                <label for="Time"> How often do you want to receive an email notification:</label>
+                                <input type="text" name="height" id="Height" placeholder="Enter time in days"><br>     
+                            </fieldset>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
     </main>
     <footer></footer>
 </body>
