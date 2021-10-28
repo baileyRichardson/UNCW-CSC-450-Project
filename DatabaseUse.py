@@ -14,7 +14,6 @@ def update_steam_account_page(userID: str, steamID: int, auto: str, remove: str,
             toggle = True
         if auto == "off":
             toggle = False
-            
         if limit is not "":
             time = float(limit)
         database.toggle_auto_track(userID, steamID, toggle)
