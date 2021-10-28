@@ -54,17 +54,17 @@
         <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
     </nav>
     <main>
-        <form method = "post">
         <table>
             <thead>Currently Linked Accounts</thead>
             <tbody>
                 {% for result in results %}
+                <form method="post">
                 <tr>
                     <td>{{result}}</td>
                 </tr>
                 <tr>
                     <div class="hid">
-                        <input type="text" name="steamAccount" id="Limit" value={{result}}><br>
+                        <input type="text" name="steamAccount{{result}}" id="Limit" value={{result}}><br>
                     </div>
                 </tr>
                 <tr>
@@ -77,18 +77,18 @@
                                     <tr>
                                         <button type="button" class="collapsible">Remove Account:</button>
                                         <div class="panel">
-                                            <input type="checkbox" name="confirmRemove" id="ConfirmRemove">Confirm
+                                            <input type="checkbox" name="confirmRemove{{result}}" id="ConfirmRemove">Confirm
                                         </div>
                                     </tr>
                                     <tr>
                                         <td>Current Time Limit: {{limits[loop.index-1]}} hours</td>
                                         <td>
-                                            <input type="text" name="limit" id="Limit" placeholder="Enter time limit in hours"><br>
+                                            <input type="text" name="limit{{result}}" id="Limit" placeholder="Enter time limit in hours"><br>
                                         </td>
                                     </tr>
                                     <tr>
                                         <td>
-                                        <input type="checkbox" name = "auto" id="Auto">Auto Track games as they're installed
+                                        <input type="checkbox" name = "auto{{result}}" id="Auto">Auto Track games as they're installed
                                         <br>
                                         </td>
                                     </tr>
@@ -109,13 +109,13 @@
                     <form>
                         <fieldset>
                             <label for="Submit"></label>
-                            <input type="submit" name="submit" id="Submit" value="Add Steam Account" class="button">
+                            <input type="button" id="Submit" value="Add Steam Account" class="button">
                         </fieldset>
                     </form>
                 </tr>
+                </form>
             </tbody>
         </table>
-        </form>
     </main>
     <script>
         var col = document.getElementsByClassName("collapsible");

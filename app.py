@@ -2,6 +2,7 @@ import requests
 from flask import *
 
 import Database
+import DatabaseUse
 import Notifications
 import Playtime
 import steamSetting
@@ -81,23 +82,29 @@ def reports():
 ##   return render_template("settingSteamAccount.html", results=Database.list_of_steam_accounts("test@gmail"))
 
 
-@app.route('/settingSteamAccount', methods=["GET","POST"])
+@app.route('/settingSteamAccount', methods=["GET", "POST"])
 def settingSteamAccount():
     accounts = Database.list_of_steam_accounts("test@gmail")
     limits = []
     for item in accounts:
-        limits.append(Database.get_playtime_limit("test@gmail",item))
-    print(limits)
+        limits.append(Database.get_playtime_limit("test@gmail", item))
     if request.method == "POST":
-        steam_account = request.form["steamAccount"]
-        auto = request.form["auto"]
-        limit = request.form["limit"]
-        remove = request.form["confirmRemove"]
-        print(auto)
-        print(steam_account)
-        print(limit)
-        print(remove)
-        render_template("settingSteamAccount.html", results=accounts, limits=limits)
+        default_value = 'off'
+        # iterate through steam accounts and get input data for each account
+        for account in accounts:
+            steam_account = request.form.get("steamAccount"+account, default_value)
+            prev_limit = Database.get_playtime_limit("test@gmail",steam_account)
+            auto = request.form.get("auto"+account, default_value)
+            limit = request.form.get("limit"+account, "null")
+            print("limit is"+limit+"with type:"+str(type(limit)))
+            print(prev_limit)
+            remove = request.form.get("confirmRemove"+account, default_value)
+            DatabaseUse.update_steam_account_page("test@gmail", steam_account, auto, remove, limit)
+        new_accounts = Database.list_of_steam_accounts("test@gmail")
+        new_limits = []
+        for item in new_accounts:
+            new_limits.append(Database.get_playtime_limit("test@gmail",item))
+        render_template("settingSteamAccount.html", results=new_accounts, limits=new_limits)
     return render_template("settingSteamAccount.html", results=accounts, limits=limits)
 
 

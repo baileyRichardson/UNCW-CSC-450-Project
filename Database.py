@@ -203,6 +203,14 @@ def get_total_playtime(userID: str, steamID: int):
         return "Account not found"
 
 
+def get_auto_track(userID: str, steamID: int):
+    if get_steam_account(userID, steamID) is not None:
+        result = db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("Auto Track").get().val()
+        return result
+    else:
+        return "Account not found"
+
+
 def update_total_playtime(userID: str, steamID: int, updatedTime: float):
     """
     This function updates the total playtime
