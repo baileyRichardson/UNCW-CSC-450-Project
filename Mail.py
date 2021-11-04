@@ -7,21 +7,31 @@
 #     userName: str = ""
 
 import smtplib
+import time
+from Report import Report
+from email.message import EmailMessage
 
-with smtplib.SMTP("smtp.gmail.com", 587) as smtp:
-    smtp.ehlo()
-    smtp.starttls()
-    smtp.ehlo()
+def send_email(email : str, frequency : int):
+    user_id = "10000"
+    user_report = Report(user_id)
 
-    smtp.login("noreplySteamMonitor@gmail.com", "UNCWcsc450")
+    msg = EmailMessage()
+    msg["Subject"] = "This is a test"
+    msg["from"] = "noreplySteamMonitor@gmail.com"
+    msg["to"] = email
 
-    subject = "This is a test"
-    body = "Hey cool this actually works"
-
-    msg = f'Subject: {subject}\n\n{body}'
-
-    smtp.sendmail("noreplySteamMonitor", "baileyr0826@gmail.com", msg)
+    report_text = str(user_report.generate_report_text())
 
 
+    print(report_text)
+    msg.set_content(report_text)
 
+    # with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+    #
+    #     smtp.login("noreplySteamMonitor@gmail.com", "UNCWcsc450")
+    #
+    #     smtp.send_message(msg)
+    #     time.sleep(frequency * 60)
+
+send_email("baileyr0826@gmail.com", 1)
 
