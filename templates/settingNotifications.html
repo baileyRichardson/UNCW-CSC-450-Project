@@ -5,7 +5,6 @@
 </head>
 {% block content %}
 <body>
-    <h1>This is a placeholder for the notifications settings.</h1>
     <header></header>
     <nav>
         <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
@@ -20,10 +19,18 @@
                 <tr>
                     <td>Email account: {{email}}</td>
                     <td>
-                        <form>
+                        <form method="post">
                             <fieldset>
                                 <label for="Time"> How often do you want to receive an email notification:</label>
-                                <input type="text" name="height" id="Height" placeholder="Enter time in days"><br>     
+                                <select name="often">
+                                    <option value="0" id="Often">Select how often</option>
+                                     <option value="1" id="Often">Every day</option>
+                                    <option value="2" id="Often">Once a week</option>
+                                    <option value="3" id="Often">Once every two weeks</option>
+                                    <option value="4" id="Often">Once a month</option>
+                                </select>
+                                <input type="submit" value="Submit changes" class="button">
+                                <p>Notifications are currently sent: {{often}}</p>
                             </fieldset>
                         </form>
                     </td>
