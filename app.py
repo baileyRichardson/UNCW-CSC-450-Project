@@ -13,6 +13,7 @@ import pyrebase
 from flask import json
 import os
 from werkzeug.exceptions import HTTPException
+from pysteamsignin.steamsignin import SteamSignIn
 import DatabaseTest
 
 
@@ -72,7 +73,7 @@ def dashboard():
     try:
         print(session["user"])
         username = "John Smith"
-        DatabaseTest.test("test@gmail", 12345)
+        # DatabaseTest.test("test@gmail", 12345)
         return render_template("dashboard.html", user=username)
     except KeyError:
         return render_template("loginPage.html")
@@ -99,12 +100,38 @@ def settings():
         return render_template("loginPage.html")
 
     
+@app.route('/processlogin/')
+def process():
+    try:
+        print(session["user"])
+        returnData = request.values
+
+        steamLogin = SteamSignIn()
+        steamID = steamLogin.ValidateResults(returnData)
+
+        print('SteamID returned is: ', steamID)
+        DatabaseUse.add_steam_account("test@gmail", steamID)
+
+        if steamID is not False:
+            return 'We logged in successfully!<br />SteamID: {0}<br />Click <a href="/settingSteamAccount"> to go back'.format(steamID)
+        else:
+            return 'Failed to log in, bad details?'
+    except KeyError:
+        return render_template("loginPage.html")
 
 
-##@app.route('/settings/')
-##def settings():
-##   return render_template("settingSteamAccount.html", results=Database.list_of_steam_accounts("test@gmail"))
-
+@app.route('/test/')
+def test():
+    try:
+        print(session["user"])
+        shouldLogin = request.args.get('test')
+        print(shouldLogin)
+        if shouldLogin is not None:
+            steamLogin = SteamSignIn()
+            return steamLogin.RedirectUser(steamLogin.ConstructURL('http://127.0.0.1:5000/processlogin'))
+        return 'Click <a href="/test/?test=true">to log in</a>'
+    except KeyError:
+        return render_template("loginPage.html")
 
 
 @app.route('/settingSteamAccount', methods=["GET", "POST"])
@@ -120,31 +147,37 @@ def settingSteamAccount():
             # iterate through steam accounts and get input data for each account
             for account in accounts:
                 steam_account = request.form.get("steamAccount"+account, default_value)
-                prev_limit = Database.get_playtime_limit("test@gmail",steam_account)
+                prev_limit = Database.get_playtime_limit("test@gmail", steam_account)
                 auto = request.form.get("auto"+account, default_value)
                 limit = request.form.get("limit"+account, "null")
                 print("limit is"+limit+"with type:"+str(type(limit)))
                 print(prev_limit)
+                # remove steam account
                 remove = request.form.get("confirmRemove"+account, default_value)
                 DatabaseUse.update_steam_account_page("test@gmail", steam_account, auto, remove, limit)
             new_accounts = Database.list_of_steam_accounts("test@gmail")
             new_limits = []
             for item in new_accounts:
-                new_limits.append(Database.get_playtime_limit("test@gmail",item))
-            render_template("settingSteamAccount.html", results=new_accounts, limits=new_limits)
+                new_limits.append(Database.get_playtime_limit("test@gmail", item))
+            return render_template("settingSteamAccount.html", results=new_accounts, limits=new_limits)
         return render_template("settingSteamAccount.html", results=accounts, limits=limits)
     except KeyError:
         return render_template("loginPage.html")
 
 
-
-@app.route("/settingNotifications")
+@app.route("/settingNotifications", methods=["GET", "POST"])
 def settingNotifications():
-
     try:
         print(session["user"])
         email = Database.get_email("test@gmail")
-        return render_template("settingNotifications.html", email=email)
+        notification = DatabaseUse.interpret_notification_time("test@gmail")
+        if request.method == "POST":
+            default_value = 2
+            often = request.form.get("often", default_value)
+            DatabaseUse.update_notifications_page("test@gmail", int(often))
+            new_notification = DatabaseUse.interpret_notification_time("test@gmail")
+            return render_template("settingNotifications.html", email=email, often=new_notification)
+        return render_template("settingNotifications.html", email=email, often=notification)
     except KeyError:
         return render_template("loginPage.html")
 

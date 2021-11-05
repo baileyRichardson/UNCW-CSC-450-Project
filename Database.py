@@ -33,7 +33,7 @@ def create_user(userID: str, userEmail: str):
     :return: True for success, False if a user with that ID already exists
     """
     if get_user(userID) is None:
-        new_data = {"Email": userEmail}
+        new_data = {"Email": userEmail, "Notification Time": 2}
         db.child('Users').child(userID).update(new_data)
         return True
     else:
@@ -62,6 +62,26 @@ def get_email(userID: str):
         return None
 
 
+def get_notif_time(userID: str):
+    if get_user(userID) is not None:
+        time = db.child("Users/"+userID).child("Notification Time").get().val()
+        return time
+    else:
+        return None
+
+
+def update_notif_time(userID: str, often: int):
+    if get_user(userID) is not None:
+        if 0 < often < 5:
+            db.child("Users/").child(userID).update({"Notification Time": often})
+            print(db.child("Users/"+userID).child("Notification Time").get().val())
+            return True
+        else:
+            return False
+    else:
+        return False
+
+
 def add_steam_account(userID: str, steamID: int):
     """
     This function creates a new Steam account and associates it with a given user
@@ -71,7 +91,7 @@ def add_steam_account(userID: str, steamID: int):
     :return: True for success, False for failure
     """
     if get_user(userID) is not None:
-        new_data = {"On Report": True,"Auto Track": False,"Limit Duration": "week", "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
+        new_data = {"On Report": True,"Auto Track": False, "Limit Duration": "week", "Exceeded": False, "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
         db.child("Users/"+userID+"/Steam Accounts").child(steamID).update(new_data)
         return True
     else:
@@ -122,6 +142,15 @@ def set_limit_duration(userID: str, steamID: int, time: str):
 
 
 def toggle_on_report(userID: str, steamID: int, tog: bool):
+    if get_steam_account(userID, steamID) is not None:
+        db.child("Users/"+userID+"/Steam Accounts/").child(steamID).update({"On Report": tog})
+        print(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("On Report").get().val())
+        return True
+    else:
+        return False
+
+
+def toggle_exceeded(userID: str, steamID: int, tog: bool):
     if get_steam_account(userID, steamID) is not None:
         db.child("Users/"+userID+"/Steam Accounts/").child(steamID).update({"On Report": tog})
         print(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("On Report").get().val())
@@ -388,9 +417,10 @@ def list_of_steam_accounts(userID: str):
     accountList = []
     if get_user(userID) is not None:
         result = db.child("Users/"+userID+"/Steam Accounts").child().get().val()
-        for key in result.keys():
-            accountList.append(key)
-        print(accountList)
+        if result is not None:
+            for key in result.keys():
+                accountList.append(key)
+            print(accountList)
         return accountList
     else:
         return None
