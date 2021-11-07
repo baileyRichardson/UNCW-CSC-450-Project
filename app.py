@@ -8,7 +8,8 @@ import Playtime
 import steamSetting
 import userManger
 import accountSettings
-from Report import Report
+from Report import Report, ReportException
+from SteamUser import SteamUser
 import pyrebase
 from flask import json
 import os
@@ -84,11 +85,13 @@ def reports():
     try:
         print(session["user"])
         user_id = "10000"
-        userReport = Report(user_id)
-        userReportText = userReport.generate_report_text()
-        return render_template("reports.html", reportText=userReportText, accountLinked=True)
+        user_report = Report(user_id)
+        user_report_data = user_report.get_report(reports_page=True)
+        return render_template("reports.html", reportData=user_report_data, accountLinked=True)
     except KeyError:
         return render_template("loginPage.html")
+    except ReportException:
+        return render_template("reports.html", accountLinked=False)
 
 
 @app.route('/settings/')
