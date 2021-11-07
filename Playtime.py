@@ -12,6 +12,7 @@ from steamwebapi import profiles
 from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, ISteamWebAPIUtil, SteamCommunityXML
 import steamspypi
 
+
 # from steam.steamid import SteamID  # Possibly useful later; Ignore for now.
 
 
@@ -69,21 +70,6 @@ class Playtime:
             return playtimes
         except:
             raise SyntaxError("Steam id is invalid")
-
-    def get_app_details(self, app_id: str) -> dict:
-        """
-        This function returns details for an application's ID
-        :return: dictonary of info about a game.
-        """
-        try:
-            data_request = dict()
-            data_request['request'] = 'appdetails'
-            appID = str(app_id)
-            data_request['appid'] = appID
-            data = steamspypi.download(data_request)  # steamspypi's download function is already checking if the
-            return data                               # request is valid, and also attempts to repair it.
-        except:
-            raise SyntaxError("App_id is invalid")
 
     """
     def get_game_stats(self, appID: int, count: int, names: list, steam_api_key: str) -> list:
