@@ -1,6 +1,6 @@
 import pytest
 
-import Report
+from Report import Report, ReportException
 
 # def get_user_id(user : User) -> int:
 #     """
@@ -13,12 +13,16 @@ import Report
 from User import User
 
 
-def test_get_user_id():
-    user = User("jimbob")
-    assert Report.get_user_id(user) == 0
+def test_instantiate_report():
+    # "10000" corresponds to a test user. user_id is usually an email.
+    user_id = "10000"
+    # Instantiating a report object
+    test_report = Report(user_id)
+    # This specific test account should have a steam account in it.
+    assert len(test_report.list_steam_accounts()) >= 1
 
-def test_get_user_id_not_found():
-    user = User("KASDJLKASDLJKDJQD")
-    with pytest.raises(Report.ReportException):
-        Report.get_user_id(user)
 
+def test_instantiate_report_id_not_found():
+    user_id = "KASDJLKASDLJKDJQD"
+    with pytest.raises(ReportException):
+        test_report = Report(user_id)
