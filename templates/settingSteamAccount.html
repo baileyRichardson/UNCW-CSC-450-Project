@@ -34,6 +34,10 @@
             display:none;
         }
         
+        input.invalid{
+            border: 3px solid red;
+        }
+        
     </style>
 </head>
 <body>
@@ -46,7 +50,6 @@
             <!--add object for logout page here-->
         </ul>
     </header>
-    <h1>This is a placeholder for the steam account settings.</h1>
     <nav>
         <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
         <li><a href="{{ url_for('settingPlaytimeTracking') }}">Playtime Tracking</a></li>
@@ -54,8 +57,10 @@
         <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
     </nav>
     <main>
+        <p>Click <a href = "test/?test=true">to link a new Steam account</a></p>
+                
         <table>
-            <thead>Currently Linked Accounts</thead>
+            <thead>Currently Linked Accounts:</thead>
             <tbody>
                 {% for result in results %}
                 <form method="post">
@@ -83,7 +88,7 @@
                                     <tr>
                                         <td>Current Time Limit: {{limits[loop.index-1]}} hours</td>
                                         <td>
-                                            <input type="text" name="limit{{result}}" id="Limit" placeholder="Enter time limit in hours"><br>
+                                            <input type="number" name="limit{{result}}" id="Limit" placeholder="Enter time limit in hours"><br>
                                         </td>
                                     </tr>
                                     <tr>
@@ -105,14 +110,6 @@
                     </td>
                 </tr>
                 {% endfor %}
-                <tr>
-                    <form>
-                        <fieldset>
-                            <label for="Submit"></label>
-                            <input type="button" id="Submit" value="Add Steam Account" class="button">
-                        </fieldset>
-                    </form>
-                </tr>
                 </form>
             </tbody>
         </table>

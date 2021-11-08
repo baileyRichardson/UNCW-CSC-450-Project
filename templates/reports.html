@@ -6,8 +6,8 @@
 {% block content %}
 <body>
     {% if accountLinked %}
-        {% for account in reportText %}
-            <h2>Account: {{account[0]}}</h2>
+        {% for account in reportData %}
+            <h2>Account: {{ account.get_steam_name() }}</h2>
             <table>
                 <tr>
                     <th>
@@ -20,24 +20,26 @@
                         Total Time Played (Minutes)
                     </th>
                 </tr>
-                {% for game in account[1] %}
+                {% set names_array, appids_array, hash_array, playtimes_array = account.get_game_names(), account.get_game_appids(), account.get_game_icons(), account.get_playtimes() %}
+                {% for i in names_array %}
                 <tr>
                     <td>
-                        <img src="http://media.steampowered.com/steamcommunity/public/images/apps/{{account[1][game][1]}}/{{account[1][game][2]}}.jpg"
+                        <img src="http://media.steampowered.com/steamcommunity/public/images/apps/{{ appids_array[loop.index] }}/{{ hash_array[loop.index] }}.jpg"
                              alt="">
                     </td>
                     <td>
-                        {{game}}
+                        {{ names_array[loop.index] }}
                     </td>
                     <td>
-                        {{account[1][game][0]}}
+                        {{ playtimes_array[loop.index] }}
                     </td>
                 </tr>
                 {% endfor %}
             </table>
         {% endfor %}
     {% else %}
-        <p>No Steam accounts are linked to this account.</p>
+        <p>No Steam accounts are linked to this account. Check your privacy settings.</p>
+        <p>Either that or Adan just messed up somewhere...</p>
     {% endif %}
 </body>
 {% endblock %}

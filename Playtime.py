@@ -12,6 +12,7 @@ from steamwebapi import profiles
 from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, ISteamWebAPIUtil, SteamCommunityXML
 import steamspypi
 
+
 # from steam.steamid import SteamID  # Possibly useful later; Ignore for now.
 
 
@@ -40,6 +41,7 @@ class Playtime:
                 self.primary_group_profile = None
         except:
             self.profileGrabStatus = False
+            raise SyntaxError("Unable to grab profile.")
 
     def get_display_name(self) -> str:
         """
@@ -53,7 +55,7 @@ class Playtime:
         except:
             raise SyntaxError("Steam id is invalid")
 
-    def get_game_info(self) -> dict:
+    def get_game_info(self) -> [int]:
         """
         This function returns a Steam User's Owned Games as well as the games playtime, appID, and image icon URL.
         :return: Dictionary of the user's games. The name of the game is the key. The item is a List containing the
@@ -63,27 +65,23 @@ class Playtime:
             player_service = IPlayerService(steam_api_key=self.steam_api_key)
             games = player_service.get_owned_games(self.steam_id, include_appinfo=True, include_played_free_games=True)[
                 'response']['games']
-            playtimes = {}
+            game_info = []
+            appids_array = []
+            names_array = []
+            img_array = []
+            playtimes_array = []
             for i in games:
-                playtimes[i['name']] = [i['playtime_forever'], i['appid'], i['img_icon_url']]
-            return playtimes
+                appids_array.append(int(i['appid']))
+                names_array.append(i['name'])
+                img_array.append(i['img_icon_url'])
+                playtimes_array.append(int(i['playtime_forever']))
+            game_info.append(appids_array)
+            game_info.append(names_array)
+            game_info.append(img_array)
+            game_info.append(playtimes_array)
+            return game_info
         except:
             raise SyntaxError("Steam id is invalid")
-
-    def get_app_details(self, app_id: str) -> dict:
-        """
-        This function returns details for an application's ID
-        :return: dictonary of info about a game.
-        """
-        try:
-            data_request = dict()
-            data_request['request'] = 'appdetails'
-            appID = str(app_id)
-            data_request['appid'] = appID
-            data = steamspypi.download(data_request)  # steamspypi's download function is already checking if the
-            return data                               # request is valid, and also attempts to repair it.
-        except:
-            raise SyntaxError("App_id is invalid")
 
     """
     def get_game_stats(self, appID: int, count: int, names: list, steam_api_key: str) -> list:

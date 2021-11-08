@@ -20,23 +20,9 @@ def send_email(email : str, frequency : int):
 
     user_id = "10000"
     user_report = Report(user_id)
-    user_report_text = user_report.generate_report_text()
+    user_report_text = user_report.get_report(reports_email=True)
 
-    email_body = """\
-    <html>
-        <body>
-        """
-    for account in user_report_text:
-        email_body = email_body + "<p> Hello, " + "here is a report for the Steam accounts linked to " + email + "</p>\n"
-        email_body = email_body + "<p> Steam account: " +  account[0] + "</p>" + "\n" + "<table>"
-        email_body = email_body + "<tr><th>Game</th><th>Playtime</th></tr>" + "\n"
-        for game in account[1]:
-            email_body = email_body + "<tr><td>" + game + "</td>" + "<td>" + str(account[1][game][0]) + "</td>" + "</tr>" + "\n"
-        email_body = email_body + "</table>" + """</body>
-        </html>
-        """
-
-    html = email_body
+    html = user_report_text
 
     html_msg = MIMEText(html, "html")
 
