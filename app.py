@@ -7,7 +7,6 @@ import Database
 import DatabaseUse
 import Notifications
 from Playtime import Playtime
-import steamSetting
 import userManger
 import accountSettings
 from Report import Report, ReportException
