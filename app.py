@@ -5,10 +5,10 @@ from flask import *
 
 import Database
 import DatabaseUse
-import Notifications
+#import Notifications
 from Playtime import Playtime
 import userManger
-import accountSettings
+#import accountSettings
 from Report import Report, ReportException
 from SteamUser import SteamUser
 import pyrebase
