@@ -3,16 +3,57 @@ from firebase import firebase
 import pyrebase
 
 firebaseConfig = {"apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
-  "authDomain": "csc-450-group-5-project.firebaseapp.com",
-  "databaseURL": "https://csc-450-group-5-project-default-rtdb.firebaseio.com",
-  "projectId": "csc-450-group-5-project",
-  "storageBucket": "csc-450-group-5-project.appspot.com",
-  "messagingSenderId": "248907054984",
-  "appId": "1:248907054984:web:3e56f6fefbb0ea8d67c43d",
-  "measurementId": "G-97CZL0FRJF"}
+                  "authDomain": "csc-450-group-5-project.firebaseapp.com",
+                  "databaseURL": "https://csc-450-group-5-project-default-rtdb.firebaseio.com",
+                  "projectId": "csc-450-group-5-project",
+                  "storageBucket": "csc-450-group-5-project.appspot.com",
+                  "messagingSenderId": "248907054984",
+                  "appId": "1:248907054984:web:3e56f6fefbb0ea8d67c43d",
+                  "measurementId": "G-97CZL0FRJF"}
 firebase = pyrebase.initialize_app(firebaseConfig)
 db = firebase.database()
+
+
 # firebase = firebase.FirebaseApplication('https://csc-450-group-5-project-default-rtdb.firebaseio.com/',None)
+
+
+def delete_store():
+    db.child("Steam Games").remove()
+
+
+def get_store():
+    result = db.child("Steam Games").get()
+    if result is None:
+        return False
+    else:
+        return True
+
+
+def get_game_id_by_name_store(name: str):
+    # search through store
+    # get list of key values
+    beans = list_of_store()
+    # iterate through keys
+    count = 0
+    gigaList =[]
+    for value in beans:
+        game = []
+        for key in value.items():
+            if count % 2 == 0:
+                #print(key[1])
+                game.append(key[1])
+            else:
+                #print(key[1])
+                game.append(key[1])
+            count += 1
+            print(game)
+        gigaList.append(game)
+
+    for l in range(len(gigaList)):
+        print(gigaList[l][1])
+        #if gigaList[l][1] == name:
+         #   print(gigaList[l][1])
+          #  return gigaList[l][0]
 
 
 def get_user(userID: str):
@@ -64,7 +105,7 @@ def get_email(userID: str):
 
 def get_notif_time(userID: str):
     if get_user(userID) is not None:
-        time = db.child("Users/"+userID).child("Notification Time").get().val()
+        time = db.child("Users/" + userID).child("Notification Time").get().val()
         return time
     else:
         return None
@@ -74,7 +115,7 @@ def update_notif_time(userID: str, often: int):
     if get_user(userID) is not None:
         if 0 < often < 5:
             db.child("Users/").child(userID).update({"Notification Time": often})
-            print(db.child("Users/"+userID).child("Notification Time").get().val())
+            print(db.child("Users/" + userID).child("Notification Time").get().val())
             return True
         else:
             return False
@@ -91,8 +132,10 @@ def add_steam_account(userID: str, steamID: int):
     :return: True for success, False for failure
     """
     if get_user(userID) is not None:
-        new_data = {"On Report": True,"Auto Track": False, "Limit Duration": "week", "Exceeded": False, "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0}, "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
-        db.child("Users/"+userID+"/Steam Accounts").child(steamID).update(new_data)
+        new_data = {"On Report": True, "Auto Track": False, "Limit Duration": "week", "Exceeded": False,
+                    "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0},
+                    "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
+        db.child("Users/" + userID + "/Steam Accounts").child(steamID).update(new_data)
         return True
     else:
         return False
@@ -152,12 +195,11 @@ def toggle_on_report(userID: str, steamID: int, tog: bool):
 
 def toggle_exceeded(userID: str, steamID: int, tog: bool):
     if get_steam_account(userID, steamID) is not None:
-        db.child("Users/"+userID+"/Steam Accounts/").child(steamID).update({"On Report": tog})
-        print(db.child("Users/"+userID+"/Steam Accounts/"+str(steamID)).child("On Report").get().val())
+        db.child("Users/" + userID + "/Steam Accounts/").child(steamID).update({"On Report": tog})
+        print(db.child("Users/" + userID + "/Steam Accounts/" + str(steamID)).child("On Report").get().val())
         return True
     else:
         return False
-
 
 
 def toggle_auto_track(userID: str, steamID: int, tog: bool):
@@ -329,7 +371,7 @@ def add_watch_game(userID: str, steamID: int, gameID: str, price: float):
     :return: True for success, False for failure
     """
     if get_steam_account(userID, steamID) is not None:
-        if check_for_watched(userID, steamID, gameID) is None:
+        if check_for_watched(userID, steamID, gameID) is False:
             db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").update({gameID: price})
             return True
         else:
@@ -419,7 +461,7 @@ def list_of_steam_accounts(userID: str):
     """
     accountList = []
     if get_user(userID) is not None:
-        result = db.child("Users/"+userID+"/Steam Accounts").child().get().val()
+        result = db.child("Users/" + userID + "/Steam Accounts").child().get().val()
         if result is not None:
             for key in result.keys():
                 accountList.append(key)
@@ -440,11 +482,13 @@ def list_of_watched_games(userID: str, steamID: int):
     if get_steam_account(userID, steamID) is not None:
         result = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").child().get().val()
         for key in result.keys():
-            subList = []
-            subList.append(key)
-            price = get_watch_game_price(userID, steamID, key)
-            subList.append(price)
-            wgList.append(subList)
+            print("Key is" + key)
+            if key != 'Temp':
+                subList = []
+                subList.append(key)
+                price = get_watch_game_price(userID, steamID, key)
+                subList.append(price)
+                wgList.append(subList)
         return wgList
     else:
         return None
@@ -463,6 +507,17 @@ def list_of_tracked_games(userID: str, steamID: int):
         for key in result.keys():
             tgList.append(key)
         return tgList
+    else:
+        return None
+
+
+def list_of_store():
+    storeList = []
+    if get_store():
+        result = db.child("Steam Games/applist").get().val()
+        for key in result:
+            storeList.append(key)
+        return storeList
     else:
         return None
 
@@ -508,11 +563,13 @@ def check_for_playtime(userID: str, steamID: int, gameID: str):
 def check_for_watched(userID: str, steamID: int, gameID: str):
     if get_steam_account(userID, steamID) is not None:
         found = False
-        if db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").child(
-                gameID).get().val() is not None:
-            found = True
-            print(gameID + " is being watched!")
-        else:
+        watched_games = list_of_watched_games(userID, steamID)
+        for game in watched_games:
+            print(game[0])
+            if game[0] == gameID:
+                print(gameID + " is being watched!")
+                found = True
+        if not found:
             print(gameID + " is not being watched")
         return found
     else:

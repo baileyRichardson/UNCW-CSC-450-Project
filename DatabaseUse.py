@@ -1,4 +1,5 @@
 import Database
+import steamStore
 
 database = Database
 
@@ -45,3 +46,30 @@ def interpret_notification_time(userID: str):
         return "Error - invalid time stored"
 
 
+def add_to_watch_list(userID: str, steamID: int, gameURL: str, price: float):
+    try:
+        gameID = gameURL.split('/')[4]
+        if gameID != '5':
+            game_name = steamStore.SteamStore.get_app_details(gameID).get("name")
+            database.add_watch_game(userID, steamID, game_name, price)
+            return game_name+" added"
+        else:
+            return ""
+    except:
+        return "Please enter valid URL"
+
+
+def update_watch_list_page(userID: str, steamID: int, game: str, new_price: float, remove: str):
+    # remove game
+    if remove == 'on':
+        database.remove_watch_game(userID, steamID, game)
+        return game+" removed from watch list"
+    # change price
+    else:
+        try:
+            price = float(new_price)
+            database.update_watch_game(userID, steamID, game, price)
+            return "Price for "+game+" updated to "+str(price)
+        except:
+            print("No value given")
+            return ""

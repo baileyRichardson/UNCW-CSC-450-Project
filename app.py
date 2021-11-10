@@ -17,6 +17,7 @@ import os
 from werkzeug.exceptions import HTTPException
 from pysteamsignin.steamsignin import SteamSignIn
 import DatabaseTest
+import steamStore
 
 
 app = Flask(__name__)
@@ -34,6 +35,7 @@ firebaseConfig = {"apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
+
 
 @app.route('/', methods=["GET", "POST"])
 def login():
@@ -64,8 +66,10 @@ def login():
 
     return render_template("loginPage.html")
 
+
 @app.route('/dashboard/')
 def dashboard():
+    #Database.delete_store()
     try:
         print(session["user"])
         username = "John Smith"
@@ -187,7 +191,6 @@ def settingNotifications():
         return render_template("loginPage.html")
 
 
-
 @app.route("/settingPlaytimeTracking")
 def settingPlaytimeTracking():
     try:
@@ -205,24 +208,42 @@ def settingPlaytimeTracking():
         return render_template("loginPage.html")
 
 
-
-@app.route("/settingWatchList")
+@app.route("/settingWatchList", methods=["GET", "POST"])
 def settingWatchList():
     try:
-        print(session["user"])
-        try:
-            steamAccounts = Database.list_of_steam_accounts(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""))
-            nested = []
-            all_prices = []
-            for item in steamAccounts:
-                nested.append(Database.list_of_watched_games(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""), item))
-            print(nested)
-            return render_template("settingWatchList.html", steam=steamAccounts, nested=nested)
-        except:
-            return render_template("settingWatchList.html")
+        #print(session["user"])
+        steamAccounts = Database.list_of_steam_accounts(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
+        #print('users')
+        nested = []
+        for item in steamAccounts:
+            nested.append(Database.list_of_watched_games(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""), item))
+        add_result = ""
+        update = ""
+        if request.method == 'POST':
+            watched_games = []
+            for account in steamAccounts:
+                watched_games.append(Database.list_of_watched_games(
+                    authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""),
+                    account))
+                default_url = "1/2/3/4/5/"
+                default_price = 00.00
+                gameURL = request.form.get("game") or default_url
+                price = float(request.form.get("price") or default_price)
+                add_result = DatabaseUse.add_to_watch_list(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""),
+                                              account, gameURL, price)
+                for a in nested:
+                    for b in a:
+                        default_remove = "off"
+                        remove = request.form.get("confirmRemove"+str(b)+b[0])
+                        new_price = request.form.get("newPrice"+str(b)+b[0])
+                        print(remove)
+                        print(new_price)
+                        update=DatabaseUse.update_watch_list_page(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""),
+                                                                        account, b[0], new_price, remove)
+            return render_template("settingWatchList.html", steam=steamAccounts, nested=nested, add=add_result, update=update)
+        return render_template("settingWatchList.html", steam=steamAccounts, nested=nested, add=add_result, update=update)
     except KeyError:
         return render_template("loginPage.html")
-
 
 
 @app.route('/forgotPass/', methods=["GET", "POST"])
