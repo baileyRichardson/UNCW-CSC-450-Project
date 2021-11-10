@@ -3,10 +3,10 @@ This file will generate the notifications and pass them to an email and send tha
 
 Matt Jarrett
 """
-import User
+#import User
 
-def __init__(self, user: User):
-    self.user = user
+#def __init__(self, user: User):
+    #self.user = user
 
 
 def hello():
