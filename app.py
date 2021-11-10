@@ -9,9 +9,7 @@ import DatabaseUse
 from Playtime import Playtime
 import userManager
 import accountSettings
-import userManger
 #import accountSettings
-853f6bb3aed57a9861c2067c6ec2a44a7af126b4
 from Report import Report, ReportException
 from SteamUser import SteamUser
 import pyrebase
