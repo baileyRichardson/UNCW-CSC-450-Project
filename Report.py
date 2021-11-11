@@ -14,7 +14,7 @@ class Report:
     def __init__(self, user: str):
         """
         Constructor for the Report class.
-        :param user: User ID as a string.
+        :param user: User email as a string.
         """
         self.user = user
         self.steam_accounts = []
@@ -26,7 +26,7 @@ class Report:
             for key in user_list:
                 steam_list.append(key)
             for account in user_list:
-                self.steam_accounts.append(Playtime(account))
+                self.steam_accounts.append(Playtime(account, self.user))
         except TypeError:
             raise ReportException("User not found.")
 
@@ -64,10 +64,7 @@ class Report:
         account_index = 0
         steam_games = []
         for account in self.steam_accounts:
-            account_data = self.__get_games(account)
-            steam_data = SteamUser(account.steam_id, account_names[account_index], account_data[0], account_data[1],
-                                   account_data[2], account_data[3])
-            account_index = account_index + 1
+            steam_data = self.__get_games(account)
             steam_games.append(steam_data)
         self.report = steam_games
 

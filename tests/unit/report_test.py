@@ -1,16 +1,9 @@
 import pytest
-
+"""
+Author: Adan Narvaez Munguia
+"""
 from Report import Report, ReportException
-
-# def get_user_id(user : User) -> int:
-#     """
-#     This method returns the userid for a specified user.
-#     :param user: the User you want to get the ID for.
-#     :return: The user's ID number or 0 if the user does not exist.
-#     """
-#     user = 0
-#     return 0
-from User import User
+from SteamUser import SteamUser
 
 
 def test_instantiate_report():
@@ -26,3 +19,14 @@ def test_instantiate_report_id_not_found():
     user_id = "KASDJLKASDLJKDJQD"
     with pytest.raises(ReportException):
         test_report = Report(user_id)
+
+
+def test_generate_report():
+    # "10000" corresponds to a test user. user_id is usually an email.
+    user_id = "10000"
+    # Instantiating a report object
+    test_report = Report(user_id)
+    # Connecting to Steam and grabbing the random account.
+    report_data: [SteamUser]
+    report_data = test_report.get_report(reports_page=True)
+    assert report_data[0].get_steam_name() is not None

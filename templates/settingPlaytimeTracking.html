@@ -22,12 +22,12 @@
                     <td>
                         <form>
                             <fieldset>
-                                <legend>Steam Account: {{result}}</legend>
+                                <legend>Steam Account: {{result[0]}}</legend>
                                 <table>
                                     <tr>
                                         <th>Games being Tracked:</th>
                                     </tr>
-                                    {% for item in nested[loop.index-1] %}
+                                    {% for item in result[3] %}
                                     <tr>
                                         <td>{{item}}</td>
                                         <td>
@@ -42,9 +42,9 @@
                                                 <label for="Game">Games:</label>
                                                 <select name="game">
                                                     <option value="select" id="Game">Select a game</option>
-                                                    <option value="GTA" id="Game">GTA V</option>
-                                                    <option value="Halo" id="Game">Halo</option>
-                                                    <option value="Pong" id="Game">Pong</option>
+                                                    {% for game_option in result[1] %}
+                                                        <option value="{{ game_option }}" id="Game">{{ game_option }}</option>
+                                                    {% endfor %}
                                                 </select><br>
                                                 <button type="button">Add</button>
                                             </fieldset>

@@ -5,6 +5,7 @@ import steamspypi
 
 class SteamStore:
 
+
     def get_app_details(app_id: str) -> dict:
         """
         This function returns details for an application's ID
