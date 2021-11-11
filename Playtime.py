@@ -1,10 +1,5 @@
 """
 Authors: William Ebright, Adan Narvaez Munguia
-Things that must be done:
-- Retrieving Tracked Games - must be done though database (probably)
-- Comparing playtime to last known playtime - must be done though database (probably)
-- Reflecting playtime comparisons that for the purposes of (pardon my français) day/week/month bs
-- Replacing the generic exceptions with more helpful ones  - Do during testing in Lab?
 """
 import requests
 from flask import json
@@ -60,11 +55,6 @@ class Playtime:
         except:
             raise SyntaxError("Steam id is invalid")
 
-    def __update_database(self):
-        tracked_games = Database.list_of_tracked_games(self.user_email, self.steam_id)
-        for i in tracked_games:
-            Database.update_playtime(self.user_email, self.steam_id, i, self.playtimes.get(i) - Database.get_playtime(self.user_email, self.steam_id, i))
-
     def get_game_info(self) -> SteamUser:
         """
         This function returns a Steam User's Owned Games as well as the games playtime, appID, and image icon URL.
@@ -79,6 +69,7 @@ class Playtime:
             img_array = []
             playtimes_array = []
             daily_playtimes_array = []
+            monthly_playtimes_array = []
             for i in games:
                 appids_array.append(int(i['appid']))
                 names_array.append(i['name'])
@@ -86,39 +77,15 @@ class Playtime:
                 playtimes_array.append(int(i['playtime_forever']))
                 if i['name'] in self.playtimes:
                     daily_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
+                    monthly_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
                     Database.update_playtime(self.user_email, self.steam_id, i['name'], i['playtime_forever'])
                     daily_playtimes_array.append(daily_playtime)
+                    monthly_playtimes_array.append(monthly_playtime)
                 else:
                     daily_playtimes_array.append(-1)
-            steam_info = SteamUser(self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array, daily_playtimes_array)
+            steam_info = SteamUser(self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array, monthly_playtimes_array, daily_playtimes_array)
             return steam_info
+        except SyntaxError:
+            print("Error from Steam!")
         except:
             raise SyntaxError("Steam id is invalid")
-
-    """
-    def get_game_stats(self, appID: int, count: int, names: list, steam_api_key: str) -> list:
-        \"""
-        THIS IS A BACKUP METHOD; should work if steamspypy is no longer an option
-        Get the global stats for a given game.
-        :return: Stats for a given game
-        \"""
-        try:
-            service_stats = ISteamUserStats(steam_api_key=self.steam_api_key)
-            game_stats = service_stats.get_global_stats_for_game(appID, count, names, )['response']['games']
-            return game_stats
-        except:
-            print("Steam ID is invalid")
-            return []
-            # raise SyntaxError("Steam id is invalid")
-
-    def get_app_details_brute(app_id: int) -> dict:
-        \"""
-        THIS IS ALSO BACKUP METHOD; is another method that should function identically to get_app_details
-        Get the global stats for a given game.
-        :return: Stats for a given game
-        \"""
-        response = get(f'{config.STEAMSPY_URL}/api.php?request=appdetails&appid={game_id}')
-        response.raise_for_status()
-        return json.loads(response.text)
-
-    """
