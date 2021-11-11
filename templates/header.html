@@ -3,9 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Steam Monitor</title>
-{#    <title>Steam Monitor</title>#}
-{#    <link href="style.css" rel="stylesheet" type="text/css">#}
-{#    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">#}
 
 <style>
     body {
@@ -54,21 +51,13 @@ nav {
             <nav>
                 <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" class="logo" alt="Steam Monitor Logo">
                 <ul class="nav-links">
-                    <li><a href="">Home</a></li>
-                    <li><a href="">Reports</a></li>
-                    <li><a href="">Settings</a></li>
+                    <li><a href="Dashboard">Home</a></li>
+                    <li><a href="reports">Reports</a></li>
+                    <li><a href="SettingSteamAccount">Settings</a></li>
                 </ul>
             </nav>
         </div>
+    {% block content %}
+    {% endblock %}
     </body>
-{#<header>#}
-{#    <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" alt="Steam Monitor Logo">#}
-{#    <ul class ="navmenu">#}
-{#        <li><a href="{{ url_for('dashboard') }}">Home</a></li>#}
-{#        <li><a href="{{ url_for('reports') }}">Reports</a></li>#}
-{#        <li><a href="{{ url_for('settingSteamAccount') }}">Settings</a></li>#}
-{#        <!--add object for logout page here-->#}
-{#    </ul>#}
-{#</header>#}
-{#{% block content %}{% endblock %}#}
 </html>
