@@ -3,61 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Steam Monitor</title>
-
-<style>
-    body {
-    margin: 0;
-    padding: 0;
-    font-family: "poppins", sans-serif;
-    box-sizing: border-box;
-}
-.header {
-    height: 0;
-    width: 100%;
-    padding: 0 0 10%;
-    background: dodgerblue;
-    position: relative;
-}
-
-nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.logo {
-    width: 200px;
-}
-
-.nav-links {
-    padding: 28px 0;
-}
-
-.nav-links li {
-    display: inline-block;
-    margin: 0 15px;
-}
-
-.nav-links li a {
-    text-decoration: none;
-    color: #fff;
-    padding: 5px 0;
-}
-</style>
-
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
 </head>
+
     <body>
         <div class="header">
             <nav>
-                <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" class="logo" alt="Steam Monitor Logo">
-                <ul class="nav-links">
-                    <li><a href="Dashboard">Home</a></li>
-                    <li><a href="reports">Reports</a></li>
-                    <li><a href="SettingSteamAccount">Settings</a></li>
-                </ul>
-            </nav>
+            <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" class="logo" alt="Steam Monitor Logo">
+			<ul>
+				<li><a href="{{ url_for('dashboard') }}">Home</a></li>
+				<li><a href="{{ url_for('reports') }}">Reports</a></li>
+				<li class="lastItem"><a href="{{ url_for('settings') }}">Settings</a>
+					<ul>
+                        <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
+						<li><a href="{{ url_for('settingPlaytimeTracking') }}">Playtime Tracking</a></li>
+						<li><a href="{{ url_for('settingNotifications') }}">Notifications</a></li>
+						<li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
+					</ul>
+				</li>
+			</ul>
+		    </nav>
         </div>
+    </body>
     {% block content %}
     {% endblock %}
-    </body>
 </html>
