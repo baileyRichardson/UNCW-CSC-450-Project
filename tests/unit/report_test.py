@@ -10,7 +10,7 @@ from Report import Report, ReportException
 #     """
 #     user = 0
 #     return 0
-from User import User
+#from User import User
 
 
 def test_instantiate_report():

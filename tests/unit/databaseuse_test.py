@@ -1,3 +1,9 @@
+'''
+Author: Matt Jarrett
+This file tests the functions of the DatabaseUse class
+It is called when the dashboard page is loaded
+'''
+
 import pytest
 
 import DatabaseUse
