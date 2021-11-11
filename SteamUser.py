@@ -1,11 +1,12 @@
 class SteamUser:
-    def __init__(self, steam_id, steam_name, app_ids, names, img_icons, playtimes):
+    def __init__(self, steam_id, steam_name, app_ids, names, img_icons, playtimes, daily_playtimes):
         self.__steam_id = steam_id
         self.__steam_name = steam_name
         self.__appid_array = app_ids
         self.__name_array = names
         self.__img_icon_array = img_icons
         self.__playtime_array = playtimes
+        self.__daily_playtimes_array = daily_playtimes
 
     def get_steam_id(self) -> int:
         """
@@ -40,3 +41,6 @@ class SteamUser:
 
     def get_playtimes(self) -> [int]:
         return self.__playtime_array
+
+    def get_daily_playtimes(self) -> [int]:
+        return self.__daily_playtimes_array
