@@ -62,6 +62,6 @@ def test_add_to_watchlist():
 def run_all():
     test_update_notifications_page()
     test_toggle_auto()
-    test_add_steam_account()
+    #test_add_steam_account()
     test_remove_steam_account()
     test_add_to_watchlist()
