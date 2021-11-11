@@ -17,45 +17,6 @@ db = firebase.database()
 # firebase = firebase.FirebaseApplication('https://csc-450-group-5-project-default-rtdb.firebaseio.com/',None)
 
 
-def delete_store():
-    db.child("Steam Games").remove()
-
-
-def get_store():
-    result = db.child("Steam Games").get()
-    if result is None:
-        return False
-    else:
-        return True
-
-
-def get_game_id_by_name_store(name: str):
-    # search through store
-    # get list of key values
-    beans = list_of_store()
-    # iterate through keys
-    count = 0
-    gigaList =[]
-    for value in beans:
-        game = []
-        for key in value.items():
-            if count % 2 == 0:
-                #print(key[1])
-                game.append(key[1])
-            else:
-                #print(key[1])
-                game.append(key[1])
-            count += 1
-            print(game)
-        gigaList.append(game)
-
-    for l in range(len(gigaList)):
-        print(gigaList[l][1])
-        #if gigaList[l][1] == name:
-         #   print(gigaList[l][1])
-          #  return gigaList[l][0]
-
-
 def get_user(userID: str):
     """
     This function returns a reference to the user object, good for checking for a user in the database
@@ -507,17 +468,6 @@ def list_of_tracked_games(userID: str, steamID: int):
         for key in result.keys():
             tgList.append(key)
         return tgList
-    else:
-        return None
-
-
-def list_of_store():
-    storeList = []
-    if get_store():
-        result = db.child("Steam Games/applist").get().val()
-        for key in result:
-            storeList.append(key)
-        return storeList
     else:
         return None
 

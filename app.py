@@ -69,7 +69,6 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
-    #Database.delete_store()
     try:
         print(session["user"])
         username = "John Smith"
