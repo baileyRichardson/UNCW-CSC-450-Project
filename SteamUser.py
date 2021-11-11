@@ -1,5 +1,5 @@
 class SteamUser:
-    def __init__(self, steam_id, steam_name, app_ids, names, img_icons, playtimes, daily_playtimes):
+    def __init__(self, steam_id: int, steam_name: str, app_ids: int, names: str, img_icons: str, playtimes: int, daily_playtimes: int):
         self.__steam_id = steam_id
         self.__steam_name = steam_name
         self.__appid_array = app_ids
