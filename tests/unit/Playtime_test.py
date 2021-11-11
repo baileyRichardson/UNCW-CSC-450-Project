@@ -1,19 +1,27 @@
 """
 Authors: William Ebright
+##Run simply by Running main()##
 """
 import pytest
-import playwright
 from Playtime import Playtime
 
 
-class testPlaytime:
-    def __init__(self):
-        self.userID = 12345678912345678
-        self.steam_api_key = '25F01C7C51803E91E331CBAD669F542C'
+def test_get_game_info(userID):
+    assert len(Playtime.get_game_info(Playtime(userID))) >= 1  # check if info is gathered; if so should be dic.
 
-    def test_get_display_name(self):
-        assert Playtime.get_display_name(self.steam_api_key, self.userID)
 
-    def test_get_display_name2(self):
-        with pytest.raises(SyntaxError):
-            Playtime.get_display_name()
+def test_get_display_name(userID):
+    assert len(Playtime.get_display_name(Playtime(userID))) >= 1  # simple test to see if there is a display name.
+
+
+def main():
+    userID = 76561198023715682
+    try:
+        test_get_game_info(userID)
+        test_get_display_name(userID)
+    except:
+        print("One or more tests caused an error")
+
+
+if __name__ == '__main__':
+    main()
