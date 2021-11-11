@@ -7,4 +7,7 @@ class userManager:
         Database.create_user(email.replace(".", ""), email)
         self.total_user_id = self.total_user_id + 1
 
+    def get_email(self):
+        return self.email
+
 

@@ -7,7 +7,8 @@ import Database
 import DatabaseUse
 #import Notifications
 from Playtime import Playtime
-import userManger
+import userManager
+import accountSettings
 #import accountSettings
 from Report import Report, ReportException
 from SteamUser import SteamUser
@@ -250,7 +251,7 @@ def signup():
         password = request.form["pass"]
         try:
             authentication.create_user_with_email_and_password(email, password)
-            userManger.userManager(email)
+            userManager.userManager(email)
             return render_template("loginPage.html")
         except requests.HTTPError as exception:
             error_json = exception.args[1]
