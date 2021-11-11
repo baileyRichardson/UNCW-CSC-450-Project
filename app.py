@@ -73,10 +73,7 @@ def login():
 def dashboard():
     DBT.run_all()
     try:
-        print(session["user"])
-        username = "John Smith"
-        # DatabaseTest.test("test@gmail", 12345)
-        return render_template("dashboard.html", user=username)
+        return render_template("dashboard.html")
     except KeyError:
         return render_template("loginPage.html")
 
@@ -198,12 +195,17 @@ def settingPlaytimeTracking():
     try:
         print(session["user"])
         try:
-            steamAccounts = Database.list_of_steam_accounts(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""))
-            nested = []
-            for item in steamAccounts:
-                nested.append(Database.list_of_tracked_games(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""), item))
-            print(nested)
-            return render_template("settingPlaytimeTracking.html", steam=steamAccounts, nested=nested)
+            user_email = authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".","")
+            accounts = Report(user_email)
+            account_list = accounts.get_report(reports_page=True)
+            steamAccounts = []
+            account: SteamUser
+            for account in account_list:
+                tracked_games = Database.list_of_tracked_games(user_email, account.get_steam_id())
+                print(tracked_games)
+                steamAccounts.append((account.get_steam_name(), account.get_game_names(), tracked_games))
+            print(steamAccounts)
+            return render_template("settingPlaytimeTracking.html", steam=steamAccounts)
         except:
             return render_template("settingPlaytimeTracking.html")
     except KeyError:

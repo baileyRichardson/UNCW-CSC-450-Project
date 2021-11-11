@@ -30,3 +30,7 @@
 ##
 ##
 ## Use "Git>Clone" from the toolbar to get changes from the GitHub repository to your local machine
+#
+#
+# To Run Black-Box test cases:
+## Simpily run BlackBoxTest.py under the "test" folder in the project, main() will run all current test cases.
