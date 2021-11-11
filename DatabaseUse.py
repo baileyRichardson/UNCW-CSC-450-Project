@@ -28,8 +28,14 @@ def add_steam_account(userID: str, steamID: int):
 
 
 def update_notifications_page(userID: str, often: int):
-    database.update_notif_time(userID, often)
-    return 1
+    try:
+        if 5 > often > 0:
+            database.update_notif_time(userID, often)
+            return True
+        else:
+            return False
+    except:
+        return False
 
 
 def interpret_notification_time(userID: str):

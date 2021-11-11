@@ -9,6 +9,7 @@ import DatabaseUse
 from Playtime import Playtime
 import userManger
 #import accountSettings
+import tests.unit.databaseuse_test as DBT
 from Report import Report, ReportException
 from SteamUser import SteamUser
 import pyrebase
@@ -69,6 +70,7 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
+    DBT.test_update_notifications_page()
     try:
         print(session["user"])
         username = "John Smith"
