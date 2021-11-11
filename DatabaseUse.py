@@ -15,7 +15,7 @@ def update_steam_account_page(userID: str, steamID: int, auto: str, remove: str,
             toggle = True
         if auto == "off":
             toggle = False
-        if limit is not "":
+        if limit != "":
             time = float(limit)
         database.toggle_auto_track(userID, steamID, toggle)
         database.set_playtime_limit(userID, steamID, time)
@@ -23,8 +23,7 @@ def update_steam_account_page(userID: str, steamID: int, auto: str, remove: str,
 
 
 def add_steam_account(userID: str, steamID: int):
-    database.add_steam_account(userID, steamID)
-    return 1
+    return database.add_steam_account(userID, steamID)
 
 
 def update_notifications_page(userID: str, often: int):
@@ -58,10 +57,10 @@ def add_to_watch_list(userID: str, steamID: int, gameURL: str, price: float):
         if gameID != '5':
             game_name = steamStore.SteamStore.get_app_details(gameID).get("name")
             database.add_watch_game(userID, steamID, game_name, price)
-            return game_name+" added"
+            return game_name + " added"
         else:
             return ""
-    except:
+    finally:
         return "Please enter valid URL"
 
 
@@ -69,13 +68,13 @@ def update_watch_list_page(userID: str, steamID: int, game: str, new_price: floa
     # remove game
     if remove == 'on':
         database.remove_watch_game(userID, steamID, game)
-        return game+" removed from watch list"
+        return game + " removed from watch list"
     # change price
     else:
         try:
             price = float(new_price)
             database.update_watch_game(userID, steamID, game, price)
-            return "Price for "+game+" updated to "+str(price)
+            return "Price for " + game + " updated to " + str(price)
         except:
             print("No value given")
             return ""

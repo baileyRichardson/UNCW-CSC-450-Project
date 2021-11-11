@@ -71,7 +71,7 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
-    DBT.test_update_notifications_page()
+    DBT.run_all()
     try:
         print(session["user"])
         username = "John Smith"

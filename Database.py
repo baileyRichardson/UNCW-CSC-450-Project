@@ -92,7 +92,7 @@ def add_steam_account(userID: str, steamID: int):
     :param steamID: an integer reference to the steam account
     :return: True for success, False for failure
     """
-    if get_user(userID) is not None:
+    if get_user(userID) is not None and type(steamID) is int:
         new_data = {"On Report": True, "Auto Track": False, "Limit Duration": "week", "Exceeded": False,
                     "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0},
                     "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
