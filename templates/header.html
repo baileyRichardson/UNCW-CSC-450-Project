@@ -3,15 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}{% endblock %} - Steam Monitor</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/style.css') }}">
 </head>
-<header>
-    <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" alt="Steam Monitor Logo">
-    <ul class ="navmenu">
-        <li><a href="{{ url_for('dashboard') }}">Home</a></li>
-        <li><a href="{{ url_for('reports') }}">Reports</a></li>
-        <li><a href="{{ url_for('settingSteamAccount') }}">Settings</a></li>
-        <!--add object for logout page here-->
-    </ul>
-</header>
-{% block content %}{% endblock %}
+
+    <body>
+        <div class="header">
+            <nav>
+            <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" class="logo" alt="Steam Monitor Logo">
+			<ul>
+				<li><a href="{{ url_for('dashboard') }}">Home</a></li>
+				<li><a href="{{ url_for('reports') }}">Reports</a></li>
+				<li class="lastItem"><a href="{{ url_for('settings') }}">Settings</a>
+					<ul>
+                        <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
+						<li><a href="{{ url_for('settingPlaytimeTracking') }}">Playtime Tracking</a></li>
+						<li><a href="{{ url_for('settingNotifications') }}">Notifications</a></li>
+						<li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
+					</ul>
+				</li>
+			</ul>
+		    </nav>
+        </div>
+    </body>
+    {% block content %}
+    {% endblock %}
 </html>

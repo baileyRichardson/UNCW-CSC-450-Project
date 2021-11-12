@@ -1,10 +1,4 @@
-#this file is for the actual email instance
-# class Email:
-#
-#     def __init__(self, emailAddress):
-#         self.emailAddress = emailAddress
-#
-#     userName: str = ""
+
 
 import smtplib
 from Report import Report
@@ -28,11 +22,13 @@ def send_email(email : str, frequency : int):
 
     msg.attach(html_msg)
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+    try:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
 
-        smtp.login("noreplySteamMonitor@gmail.com", "UNCWcsc450")
+            smtp.login("noreplySteamMonitor@gmail.com", "UNCWcsc450")
 
-        smtp.send_message(msg)
+            smtp.send_message(msg)
+    except smtplib.SMTPAuthenticationError as e:
+        print("The smtp server login is incorrect. Double check the email and password.")
 
-send_email("baileyr0826@gmail.com", 1)
-
+# send_email("baileyr0826@gmail.com", 1)

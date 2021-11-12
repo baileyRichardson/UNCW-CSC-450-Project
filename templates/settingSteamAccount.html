@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "header.html" %}
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Settings Steam Account{% endblock %}</title>
@@ -37,25 +36,34 @@
         input.invalid{
             border: 3px solid red;
         }
-        
+
+        .dropdown {
+            display: inline-block;
+            position: relative;
+        }
     </style>
 </head>
 <body>
-    <header>
-        <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" alt="Steam Monitor Logo">
-        <ul class ="navmenu">
-            <li><a href="{{ url_for('dashboard') }}">Home</a></li>
-            <li><a href="{{ url_for('reports') }}">Reports</a></li>
-            <li><a href="{{ url_for('settingSteamAccount') }}">Settings</a></li>
-            <!--add object for logout page here-->
-        </ul>
-    </header>
-    <nav>
-        <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
-        <li><a href="{{ url_for('settingPlaytimeTracking') }}">Playtime Tracking</a></li>
-        <li><a href="{{ url_for('settingNotifications') }}">Notifications</a></li>
-        <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
-    </nav>
+{% block content %}
+{#    <header>#}
+{#        <img src="{{url_for('static', filename='images/SteamMonitorLogo.png')}}" alt="Steam Monitor Logo">#}
+{#        <ul class ="navmenu">#}
+{#            <li><a href="{{ url_for('dashboard') }}">Home</a></li>#}
+{#            <li><a href="{{ url_for('reports') }}">Reports</a></li>#}
+{#            <li><a href="{{ url_for('settingSteamAccount') }}">Settings</a></li>#}
+{#            <!--add object for logout page here-->#}
+{#        </ul>#}
+{#    </header>#}
+{#    <div class="dropdown">#}
+{#        <nav>#}
+{#            <ul>#}
+{#                <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>#}
+{#                <li><a href="{{ url_for('settingPlaytimeTracking') }}">Playtime Tracking</a></li>#}
+{#                <li><a href="{{ url_for('settingNotifications') }}">Notifications</a></li>#}
+{#                <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>#}
+{#            </ul>#}
+{#        </nav>#}
+{#    </div>#}
     <main>
         <p>Click <a href = "test/?test=true">to link a new Steam account</a></p>
                 
@@ -131,5 +139,5 @@
         }
     </script>
     <footer></footer>
+{% endblock %}
 </body>
-</html>

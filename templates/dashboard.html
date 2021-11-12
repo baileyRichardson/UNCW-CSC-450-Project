@@ -3,8 +3,11 @@
     <meta charset="UTF-8">
     <title>{% block title %}Dashboard{% endblock %}</title>
 </head>
-{% block content %}
+
 <body>
+{% block content %}
     <h1>This is a placeholder for the dashboard.</h1>
-</body>
+    <h2>Your name is: {{ user }}, if it is wrong, don't blame me. I don't know where my data is.</h2>
 {% endblock %}
+</body>
+

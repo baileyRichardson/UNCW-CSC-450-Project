@@ -1,3 +1,8 @@
+"""
+Author: William Ebright
+Notes:
+    Maybe repalce time.sleeps with a simple re-try until it works though playwright? (Messier?)
+"""
 from playwright.sync_api import sync_playwright
 import time
 
@@ -50,23 +55,27 @@ def BB_test_steam_link(page):
     try:
         print("\nCurrently testing steam-linking")
         page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
+        page.hover('[href="/settings/"]')
+        time.sleep(0.2)
         page.query_selector('[href = "/settingSteamAccount"]').click()
         page.query_selector('[href = "test/?test=true"]').click()
-        page.query_selector('[id = "imageLogin"]').click()  # do this if steam account is already logged in
-        # If this works, success! (Make new version that can log into steam in class.)
+        time.sleep(0.2)
+        page.query_selector('[id = "imageLogin"]').click()  # if not ALREADY logged in, will fail here for now.
     except:
-        print('Unsuccessful steam linking')  # Might not work in class?
+        print('Unsuccessful steam linking')
 
 
-def BB_test_set_notification(page):  # somethings gto a bug here
+def BB_test_set_notification(page):  # somethings got a bug here
     try:
         print("\nCurrently testing notification settings")
         page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
-        page.query_selector('[href = "/settingSteamAccount"]').click()
+        # page.query_selector('[href = "/settingSteamAccount"]').click()
+        page.hover('[href="/settings/"]')
         page.query_selector('[href="/settingNotifications"]').click()
-        # page.query_selector('[name="often"]').click()
-        time.sleep(1)
+        page.query_selector('[name="often"]').click()  # ask about this in class?
+        time.sleep(2)
         page.query_selector('[value="2"]').click()
+        time.sleep(0.2)
         page.query_selector('[value="Submit changes"]').click()
     except:
         print('Unsuccessful Notification setting')

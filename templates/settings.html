@@ -6,13 +6,19 @@
 {% block content %}
 <body>
     <h1>This is a placeholder for the settings.</h1>
+    <h2>We need to get rid of this altogether since settings is now a drop down menu.
+    <br>
+    I just haven't figured out how to make the settings button un-clickable yet so
+    <br>
+    it needs to be routed somewhere.
+    </h2>
     <header></header>
-    <nav>
-        <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>
-        <li><a href="{{ url_for('settingPlaytimeTracking') }}">Playtime Tracking</a></li>
-        <li><a href="{{ url_for('settingNotifications') }}">Notifications</a></li>
-        <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>
-    </nav>
+{#    <nav>#}
+{#        <li><a href="{{ url_for('settingSteamAccount') }}">Steam Account</a></li>#}
+{#        <li><a href="{{ url_for('settingPlaytimeTracking') }}">Playtime Tracking</a></li>#}
+{#        <li><a href="{{ url_for('settingNotifications') }}">Notifications</a></li>#}
+{#        <li><a href="{{ url_for('settingWatchList') }}">Watch List</a></li>#}
+{#    </nav>#}
     <main></main>
     <footer></footer>
 </body>

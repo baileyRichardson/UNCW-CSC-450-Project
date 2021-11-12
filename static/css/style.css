@@ -1,0 +1,77 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "poppins", sans-serif;
+    box-sizing: border-box;
+	width: 100%;
+}
+
+.header {
+    height: 0;
+    width: 100%;
+    padding: 10px 10px 5%;
+    background: dodgerblue;
+    position: relative;
+}
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    width: 180px;
+}
+
+nav ul li {
+	float: left;
+	display: block;
+}
+
+nav ul li a {
+	text-decoration: none;
+	text-align: center;
+	display: block;
+	width: 200px;
+	padding: 5px;
+	background-color: dodgerblue;
+	color: black;
+}
+
+nav ul ul{
+	display: none;
+	position: absolute;
+}
+
+nav ul ul li {
+	float: none;
+	position: relative;
+}
+
+nav ul ul li ul {
+	position: absolute;
+	left: 100%;
+	top: 0;
+}
+
+nav ul li.lastItem ul li ul {
+	position: absolute;
+	left: -100%;
+	top: 0;
+}
+
+nav ul li:hover > ul {
+	display: block;
+}
+
+nav ul li a:hover{
+	background-color: white;
+}
+
+nav > ul::after {
+	content: "";
+	clear: both;
+	display: block;
+}
