@@ -232,9 +232,11 @@ def settingPlaytimeTracking():
 def settingWatchList():
     try:
         print(session["user"])
+        #print(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
         steamAccounts = Database.list_of_steam_accounts(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
         #print('users')
         nested = []
+        #print(steamAccounts)
         for item in steamAccounts:
             nested.append(Database.list_of_watched_games(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""), item))
         add_result = ""
