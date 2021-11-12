@@ -71,8 +71,8 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
-    DBT.run_all()
     try:
+        print(session["user"])
         return render_template("dashboard.html")
     except KeyError:
         return render_template("loginPage.html")
@@ -231,7 +231,7 @@ def settingPlaytimeTracking():
 @app.route("/settingWatchList", methods=["GET", "POST"])
 def settingWatchList():
     try:
-        #print(session["user"])
+        print(session["user"])
         steamAccounts = Database.list_of_steam_accounts(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
         #print('users')
         nested = []
