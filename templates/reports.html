@@ -2,39 +2,48 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Reports{% endblock %}</title>
+    {% block scripts %}
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
+    {% endblock %}
 </head>
 {% block content %}
 <body>
     {% if accountLinked %}
         {% for account in reportData %}
             <h2>Account: {{ account.get_steam_name() }}</h2>
-            <table>
-                <tr>
-                    <th>
+            <table id="Reports_Table">
+                <thead>
+                    <tr>
+                        <th>
 
-                    </th>
-                    <th>
-                        Game
-                    </th>
-                    <th>
-                        Total Time Played (Minutes)
-                    </th>
-                </tr>
+                        </th>
+                        <th>
+                            Game
+                        </th>
+                        <th>
+                            Total Time Played (Minutes)
+                        </th>
+                    </tr>
+                </thead>
                 {% set names_array, appids_array, hash_array, playtimes_array = account.get_game_names(), account.get_game_appids(), account.get_game_icons(), account.get_playtimes() %}
-                {% for i in names_array %}
-                <tr>
-                    <td>
-                        <img src="http://media.steampowered.com/steamcommunity/public/images/apps/{{ appids_array[loop.index] }}/{{ hash_array[loop.index] }}.jpg"
-                             alt="">
-                    </td>
-                    <td>
-                        {{ names_array[loop.index] }}
-                    </td>
-                    <td>
-                        {{ playtimes_array[loop.index] }}
-                    </td>
-                </tr>
-                {% endfor %}
+                <tbody>
+                    {% for i in names_array %}
+                        <tr>
+                            <td>
+                                <img src="http://media.steampowered.com/steamcommunity/public/images/apps/{{ appids_array[loop.index - 1] }}/{{ hash_array[loop.index - 1] }}.jpg"
+                                     alt="">
+                            </td>
+                            <td>
+                                {{ names_array[loop.index - 1] }}
+                            </td>
+                            <td>
+                                {{ playtimes_array[loop.index - 1] }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         {% endfor %}
     {% else %}
@@ -42,4 +51,13 @@
         <p>Either that or Adan just messed up somewhere...</p>
     {% endif %}
 </body>
+    <script>
+        $(document).ready( function () {
+            $('#Reports_Table').DataTable({
+                columnDefs: [
+                    {orderable: false, targets: 0}
+                ]
+            });
+        } );
+    </script>
 {% endblock %}

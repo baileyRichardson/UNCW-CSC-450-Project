@@ -75,6 +75,7 @@ class Playtime:
                 names_array.append(i['name'])
                 img_array.append(i['img_icon_url'])
                 playtimes_array.append(int(i['playtime_forever']))
+                """
                 if i['name'] in self.playtimes:
                     daily_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
                     monthly_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
@@ -83,6 +84,7 @@ class Playtime:
                     monthly_playtimes_array.append(monthly_playtime)
                 else:
                     daily_playtimes_array.append(-1)
+                """
             steam_info = SteamUser(self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array, monthly_playtimes_array, daily_playtimes_array)
             return steam_info
         except SyntaxError:
