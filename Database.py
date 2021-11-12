@@ -61,7 +61,7 @@ def get_email(userID: str):
         email = db.child("Users/" + userID).child("Email").get().val()
         return email
     else:
-        return None
+        return "Account not found"
 
 
 def get_notif_time(userID: str):
@@ -69,7 +69,7 @@ def get_notif_time(userID: str):
         time = db.child("Users/" + userID).child("Notification Time").get().val()
         return time
     else:
-        return None
+        return "Account not found"
 
 
 def update_notif_time(userID: str, often: int):
@@ -319,7 +319,7 @@ def get_watch_game_price(userID: str, steamID: int, gameID: str):
             gameID).get().val()
         return price
     else:
-        return None
+        return "Account not found"
 
 
 def add_watch_game(userID: str, steamID: int, gameID: str, price: float):
@@ -428,7 +428,7 @@ def list_of_steam_accounts(userID: str):
             print(accountList)
         return accountList
     else:
-        return None
+        return []
 
 
 def list_of_watched_games(userID: str, steamID: int):
@@ -451,7 +451,7 @@ def list_of_watched_games(userID: str, steamID: int):
                 wgList.append(subList)
         return wgList
     else:
-        return None
+        return []
 
 
 def list_of_tracked_games(userID: str, steamID: int):
@@ -469,7 +469,7 @@ def list_of_tracked_games(userID: str, steamID: int):
                 tgList.append(key)
         return tgList
     else:
-        return None
+        return []
 
 
 def list_of_playtime_games(userID: str, steamID: int):
@@ -486,7 +486,7 @@ def list_of_playtime_games(userID: str, steamID: int):
             pList.append(key)
         return pList
     else:
-        return None
+        return []
 
 
 def check_for_playtime(userID: str, steamID: int, gameID: str):
