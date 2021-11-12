@@ -1,11 +1,9 @@
 '''
 Author: Matt Jarrett
 This file tests the functions of the DatabaseUse class
-It is called when the dashboard page is loaded
+Run this file to run the tests
 '''
-
 import pytest
-
 import DatabaseUse
 
 
@@ -39,14 +37,6 @@ def test_toggle_auto():
     assert DatabaseUse.update_steam_account_page(userID, steamID, auto, remove, limit) == 2
 
 
-def test_add_steam_account():
-    # a test account
-    userID = "test@gmail"
-    #an invalid steam account ID
-    steamID = "asdfghj"
-    assert DatabaseUse.add_steam_account(userID, steamID) is False
-
-
 def test_add_to_watchlist():
     # a test account
     userID = "test@gmail"
@@ -59,9 +49,17 @@ def test_add_to_watchlist():
     assert DatabaseUse.add_to_watch_list(userID, steamID, gameURL, price) == "Please enter valid URL"
 
 
+def test_add_steam_account():
+    userID = "test@gmail"
+    steamID = 12345
+    assert DatabaseUse.add_steam_account(userID, steamID) == True
+
+
 def run_all():
     test_update_notifications_page()
     test_toggle_auto()
-    test_add_steam_account()
     test_remove_steam_account()
     test_add_to_watchlist()
+    test_add_steam_account()
+
+run_all()

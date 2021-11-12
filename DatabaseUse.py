@@ -60,7 +60,7 @@ def add_to_watch_list(userID: str, steamID: int, gameURL: str, price: float):
             return game_name + " added"
         else:
             return ""
-    finally:
+    except:
         return "Please enter valid URL"
 
 
@@ -78,3 +78,9 @@ def update_watch_list_page(userID: str, steamID: int, game: str, new_price: floa
         except:
             print("No value given")
             return ""
+
+
+def update_tracked_games_page(userID: str, steamID: int, game: str, remove: str):
+    # remove game
+    if remove == "on":
+        database.remove_tracked_game(game, userID, steamID)

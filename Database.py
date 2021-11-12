@@ -92,7 +92,7 @@ def add_steam_account(userID: str, steamID: int):
     :param steamID: an integer reference to the steam account
     :return: True for success, False for failure
     """
-    if get_user(userID) is not None and type(steamID) is int:
+    if get_user(userID) is not None:
         new_data = {"On Report": True, "Auto Track": False, "Limit Duration": "week", "Exceeded": False,
                     "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0},
                     "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
@@ -365,7 +365,6 @@ def add_global_playtime(gameID: str, userID: str, steamID: int):
     :param gameID: the game string to be added
     :param userID: the associated user
     :param steamID: the steam account
-    :param auto: whether or not this game should be automatically tracked
     :return: True for success, False for failure
     """
     if get_steam_account(userID, steamID) is not None:
@@ -443,7 +442,7 @@ def list_of_watched_games(userID: str, steamID: int):
     if get_steam_account(userID, steamID) is not None:
         result = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").child().get().val()
         for key in result.keys():
-            print("Key is" + key)
+            #print("Key is" + key)
             if key != 'Temp':
                 subList = []
                 subList.append(key)
@@ -466,7 +465,8 @@ def list_of_tracked_games(userID: str, steamID: int):
     if get_steam_account(userID, steamID) is not None:
         result = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Tracked Games").child().get().val()
         for key in result.keys():
-            tgList.append(key)
+            if key != "Temp":
+                tgList.append(key)
         return tgList
     else:
         return None

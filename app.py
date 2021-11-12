@@ -71,8 +71,8 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
-    DBT.run_all()
     try:
+        print(session["user"])
         return render_template("dashboard.html")
     except KeyError:
         return render_template("loginPage.html")
@@ -110,10 +110,11 @@ def process():
         steamID = steamLogin.ValidateResults(returnData)
 
         print('SteamID returned is: ', steamID)
-        DatabaseUse.add_steam_account(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""), steamID)
+        print(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""))
+        DatabaseUse.add_steam_account(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""), int(steamID))
 
         if steamID is not False:
-            return 'We logged in successfully!<br />SteamID: {0}<br />Click <a href="/settingSteamAccount"> to go back'.format(steamID)
+            return 'We logged in successfully!<br />SteamID: {0}<br />Click <a href="/dashboard"> to go back'.format(steamID)
         else:
             return 'Failed to log in, bad details?'
     except KeyError:
@@ -185,27 +186,42 @@ def settingNotifications():
                 return render_template("settingNotifications.html", email=email, often=new_notification)
             return render_template("settingNotifications.html", email=email, often=notification)
         except:
-            return render_template("settingNotifications.html", email=email)
+            notification = DatabaseUse.interpret_notification_time(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""))
+            return render_template("settingNotifications.html", email=email, often=notification)
     except KeyError:
         return render_template("loginPage.html")
 
 
-@app.route("/settingPlaytimeTracking")
+@app.route("/settingPlaytimeTracking", methods=["GET", "POST"])
 def settingPlaytimeTracking():
     try:
         print(session["user"])
         try:
             user_email = authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".","")
+            print(user_email)
             accounts = Report(user_email)
             account_list = accounts.get_report(reports_page=True)
+            print(account_list)
             steamAccounts = []
             account: SteamUser
             for account in account_list:
                 tracked_games = Database.list_of_tracked_games(user_email, account.get_steam_id())
-                print(tracked_games)
+                #print(tracked_games)
                 steamAccounts.append((account.get_steam_name(), account.get_game_names(), tracked_games))
             print(steamAccounts)
-            return render_template("settingPlaytimeTracking.html", steam=steamAccounts)
+            if request.method == "POST":
+                for current_account in account_list:
+                    new_game = request.form.get("game")
+                    if new_game != "Select a game":
+                        Database.add_tracked_game(new_game, user_email, current_account.get_steam_id())
+                        tracked_games = Database.list_of_tracked_games(user_email, current_account.get_steam_id())
+                        return render_template("settingPlaytimeTracking.html", steam=steamAccounts, tracked=tracked_games)
+                    for game in tracked_games:
+                        remove = request.form.get("confirmRemove"+game) or "off"
+                        DatabaseUse.update_tracked_games_page(user_email, current_account.get_steam_id(), game, remove)
+                        tracked_games = Database.list_of_tracked_games(user_email, current_account.get_steam_id())
+                return render_template("settingPlaytimeTracking.html", steam=steamAccounts, tracked=tracked_games)
+            return render_template("settingPlaytimeTracking.html", steam=steamAccounts, tracked=tracked_games)
         except:
             return render_template("settingPlaytimeTracking.html")
     except KeyError:
@@ -215,7 +231,7 @@ def settingPlaytimeTracking():
 @app.route("/settingWatchList", methods=["GET", "POST"])
 def settingWatchList():
     try:
-        #print(session["user"])
+        print(session["user"])
         steamAccounts = Database.list_of_steam_accounts(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
         #print('users')
         nested = []
@@ -244,6 +260,7 @@ def settingWatchList():
                         print(new_price)
                         update=DatabaseUse.update_watch_list_page(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""),
                                                                         account, b[0], new_price, remove)
+                return render_template("settingWatchList.html", steam=steamAccounts, nested=nested, add=add_result, update=update)
             return render_template("settingWatchList.html", steam=steamAccounts, nested=nested, add=add_result, update=update)
         return render_template("settingWatchList.html", steam=steamAccounts, nested=nested, add=add_result, update=update)
     except KeyError:
