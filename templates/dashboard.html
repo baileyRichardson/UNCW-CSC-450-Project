@@ -4,10 +4,63 @@
     <title>{% block title %}Dashboard{% endblock %}</title>
 </head>
 
-<body>
 {% block content %}
     <h1>Welcome to Steam Monitor!</h1>
     <h2>Please use our menu options to navigate.</h2>
+
+    <style>
+
+        #contentTop {
+            width: 100%;
+            float: top;
+            overflow: auto;
+        }
+
+        #contentLeft {
+            width: 25%;
+            float: left;
+            overflow: auto;
+        }
+
+        #contentRight {
+            width: 25%;
+            float: right;
+            overflow: auto;
+        }
+
+        #contentBottom {
+            width: 100%;
+            float: bottom;
+            overflow: auto;
+        }
+        /* pertains to all the boxes for data... rename div classes
+        to make some of them different sizes*/
+        div.scrollSection {
+            border: 1px solid dodgerblue;
+            height: 25vh;
+            display: block;
+            background: white;
+            overflow: auto;
+        }
+        </style>
+
+        <body>
+            <div id="contentTop">
+                <div class="scrollSection">First chunk of scroll content</div>
+            </div>
+
+            <div id="contentLeft">
+                <div class="scrollSection">First chunk of scroll content</div>
+            </div>
+
+            <div id="contentRight">
+                <div class="scrollSection">First chunk of scroll content</div>
+            </div>
+
+            <div id="contentBottom">
+                <div class="scrollSection">First chunk of scroll content</div>
+            </div>
+        </body>
+
 {% endblock %}
-</body>
 
