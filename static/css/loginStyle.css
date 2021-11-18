@@ -1,0 +1,70 @@
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    font-family: Arial, serif;
+    }
+
+.login, .signup, .resetPassword {
+    width: 400px;
+    overflow: hidden;
+    margin: auto;
+    padding: 80px;
+    background: dodgerblue;
+    border-radius: 15px ;
+    text-align: center;
+}
+
+h1 {
+    text-align: center;
+    color: dodgerblue;
+    padding: 20px;
+}
+
+.label {
+    color: white;
+    font-size: 17px;
+    text-align: left;
+    text-indent: 44px;
+}
+
+#inputEmail {
+    width: 300px;
+    height: 30px;
+    border: none;
+    border-radius: 3px;
+    padding-left: 8px;
+}
+
+#inputPassword {
+    width: 300px;
+    height: 30px;
+    border: none;
+    border-radius: 3px;
+    padding-left: 8px;
+}
+
+.button {
+    width: 300px;
+    height: 30px;
+    border: none;
+    border-radius: 17px;
+    padding-left: 7px;
+    background-color: white;
+    color: dodgerblue;
+}
+
+.createAccount {
+    color: white;
+    font-size: 17px;
+}
+
+a {
+    color: white;
+}
+
+.errors {
+    font-family: Arial, serif;
+    color: red;
+}

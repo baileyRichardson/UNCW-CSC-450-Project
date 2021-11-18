@@ -2,101 +2,40 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
-
-    <style>
-
-body    {
-    margin: 0;
-    padding: 0;
-    background-color: white;
-    font-family: Arial, serif;
-}
-
-.login  {
-    width: 400px;
-    overflow: hidden;
-    margin: auto;
-    {#margin: 0 0 0 450px;#}
-    padding: 80px;
-    background: dodgerblue;
-    border-radius: 15px ;
-
-}
-
-h2  {
-    text-align: center;
-    color: dodgerblue;
-    padding: 20px;
-}
-
-label   {
-    color: white;
-    font-size: 17px;
-}
-
-#inputEmail  {
-    width: 300px;
-    height: 30px;
-    border: none;
-    border-radius: 3px;
-    padding-left: 8px;
-}
-
-#inputPassword   {
-    width: 300px;
-    height: 30px;
-    border: none;
-    border-radius: 3px;
-    padding-left: 8px;
-
-}
-
-.button    {
-    width: 300px;
-    height: 30px;
-    border: none;
-    border-radius: 17px;
-    padding-left: 7px;
-    background-color: white;
-    text-decoration-color: dodgerblue;
-}
-
-.createAccount    {
-    color: white;
-    font-size: 17px;
-}
-
-a   {
-    background-color: dodgerblue;
-    color: white;
-}
-
-    </style>
+    <title>Login Page</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='css/loginStyle.css') }}">
 </head>
+
 <body>
 
-    {% if errors != false %}
-    <p> {{ errors }}</p>
-    {% endif %}
-
-    <h2>Welcome to Steam Monitor</h2>
+    <h1>Welcome to Steam Monitor</h1>
     <div class="login">
+
+        <div class="errors">
+            {% if errors != false %}
+            <p> {{ errors }}</p>
+            {% endif %}
+        </div>
+
         <form action="/" method="post">
         <br>
-        <label for="inputEmail">Email address</label>
-        <br>
+        <div class="label">
+            <label for="inputEmail">Email address</label>
+        </div>
+
         <input type="email" id="inputEmail" name="name" required autofocus>
         <br>
         <br>
-        <label for="inputPassword">Password</label>
-        <br>
+        <div class="label">
+            <label for="inputPassword">Password</label>
+        </div>
+
         <input type="password" id="inputPassword" name="pass" required autofocus>
         <br><br>
-        <button class="button" name="button">Sign In</button>
+        <button class="button" name="button">Log In</button>
         <br><br>
         <div class="createAccount">
-        Don't have an account? Create one <a href="{{ url_for('signup') }}">here!</a>
+            Don't have an account? Create one <a href="{{ url_for('signup') }}">here!</a>
         </div>
         <br>
         <br>
