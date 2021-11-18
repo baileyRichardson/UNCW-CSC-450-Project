@@ -5,62 +5,41 @@
 </head>
 
 {% block content %}
-    <h1>Welcome to Steam Monitor!</h1>
-    <h2>Please use our menu options to navigate.</h2>
 
     <style>
 
-        #contentTop {
-            width: 100%;
-            float: top;
-            overflow: auto;
-        }
+    #dashboard {
+        width: 100%;
+        overflow: auto;
+    }
+    .report {
+        border: solid 1px dodgerblue;
+        height: 28vh;
+        display: block;
+        background-color: white;
+    }
+    .watchedList {
+        border: solid 1px dodgerblue;
+        height: 28vh;
+        display: block;
+        background-color: white;
+    }
+    .coolStats {
+        border: solid 1px dodgerblue;
+        height: 28vh;
+        display: block;
+        background-color: white;
+    }
 
-        #contentLeft {
-            width: 25%;
-            float: left;
-            overflow: auto;
-        }
+    </style>
 
-        #contentRight {
-            width: 25%;
-            float: right;
-            overflow: auto;
-        }
-
-        #contentBottom {
-            width: 100%;
-            float: bottom;
-            overflow: auto;
-        }
-        /* pertains to all the boxes for data... rename div classes
-        to make some of them different sizes*/
-        div.scrollSection {
-            border: 1px solid dodgerblue;
-            height: 25vh;
-            display: block;
-            background: white;
-            overflow: auto;
-        }
-        </style>
-
-        <body>
-            <div id="contentTop">
-                <div class="scrollSection">First chunk of scroll content</div>
-            </div>
-
-            <div id="contentLeft">
-                <div class="scrollSection">First chunk of scroll content</div>
-            </div>
-
-            <div id="contentRight">
-                <div class="scrollSection">First chunk of scroll content</div>
-            </div>
-
-            <div id="contentBottom">
-                <div class="scrollSection">First chunk of scroll content</div>
-            </div>
-        </body>
+<body>
+    <div id="dashboard">
+        <div class="report">Hey this is where a report summary can go</div>
+        <div class="watchedList">This can be for watched games</div>
+        <div class="coolStats">This can be for whatever other stuff we want on the dashboard</div>
+    </div>
+</body>
 
 {% endblock %}
 

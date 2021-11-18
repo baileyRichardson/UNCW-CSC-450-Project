@@ -28,7 +28,7 @@ nav {
 }
 
 nav ul{
-		margin-top: revert;
+	margin-top: revert;
 }
 nav ul li {
 	float: left;
