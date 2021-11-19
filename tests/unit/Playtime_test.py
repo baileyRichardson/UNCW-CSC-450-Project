@@ -3,6 +3,7 @@ import pytest
 Authors: William Ebright, Adan Narvaez Munguia
 """
 from Playtime import Playtime
+from steamStore import SteamStore
 import Database
 
 
@@ -26,3 +27,9 @@ def test_user_not_found():
     user_email = "10000"
     with pytest.raises(AttributeError):
         Playtime(steam_id, user_email).get_display_name()
+
+
+def test_get_app_details():
+    appID = "493520"  #GTFO's id
+    with pytest.raises(AttributeError):
+        SteamStore.get_app_details(appID)
