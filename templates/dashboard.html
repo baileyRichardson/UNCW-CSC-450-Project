@@ -4,10 +4,42 @@
     <title>{% block title %}Dashboard{% endblock %}</title>
 </head>
 
-<body>
 {% block content %}
-    <h1>Welcome to Steam Monitor!</h1>
-    <h2>Please use our menu options to navigate.</h2>
-{% endblock %}
+
+    <style>
+
+    #dashboard {
+        width: 100%;
+        overflow: auto;
+    }
+    .report {
+        border: solid 1px dodgerblue;
+        height: 28vh;
+        display: block;
+        background-color: white;
+    }
+    .watchedList {
+        border: solid 1px dodgerblue;
+        height: 28vh;
+        display: block;
+        background-color: white;
+    }
+    .coolStats {
+        border: solid 1px dodgerblue;
+        height: 28vh;
+        display: block;
+        background-color: white;
+    }
+
+    </style>
+
+<body>
+    <div id="dashboard">
+        <div class="report">Hey this is where a report summary can go</div>
+        <div class="watchedList">This can be for watched games</div>
+        <div class="coolStats">This can be for whatever other stuff we want on the dashboard</div>
+    </div>
 </body>
+
+{% endblock %}
 

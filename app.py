@@ -54,9 +54,9 @@ def login():
             error_json = exception.args[1]
             error = json.loads(error_json)["error"]["message"]
             if error == "EMAIL_NOT_FOUND":
-                error_text = "No account linked to this email address can be found."
+                error_text = "Invalid login credentials. Please try again."
             elif error == "INVALID_PASSWORD":
-                error_text = "The password you have entered is incorrect."
+                error_text = "Invalid login credentials. Please try again."
             elif error == "TOO_MANY_ATTEMPTS_TRY_LATER : Access to this account has been temporarily " \
                           "disabled due to many failed login attempts. You can immediately restore it " \
                           "by resetting your password or you can try again later.":
