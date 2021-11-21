@@ -56,7 +56,7 @@ def add_to_watch_list(userID: str, steamID: int, gameURL: str, price: float):
         gameID = gameURL.split('/')[4]
         if gameID != '5':
             game_name = steamStore.SteamStore.get_app_details(gameID).get("name")
-            database.add_watch_game(userID, steamID, game_name, price)
+            database.add_watch_game(userID, steamID, game_name, gameID, price)
             return game_name + " added"
         else:
             return ""
