@@ -16,7 +16,7 @@
 ## Select download and everything the project needs to run Flask will be installed.
 ##
 ## To test if your project works, run app.py. The terminal should show you a hyperlink
-## Clicking this link should take you to a blank webpage on your browser with the words "Hello World!".
+## Clicking this link should take you to a login page
 ## If you see this, then your PyCharm project has been successfully created
 ##
 ##

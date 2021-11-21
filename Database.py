@@ -95,7 +95,7 @@ def add_steam_account(userID: str, steamID: int):
     if get_user(userID) is not None:
         new_data = {"On Report": True, "Auto Track": False, "Limit Duration": "week", "Exceeded": False,
                     "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0},
-                    "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": 0}}
+                    "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": {"ID": 0, "Price": 0}}}
         db.child("Users/" + userID + "/Steam Accounts").child(steamID).update(new_data)
         return True
     else:
@@ -307,7 +307,7 @@ def update_watch_game(userID: str, steamID: int, gameID: str, price: float):
     :return: True for success, False for failure
     """
     if get_steam_account(userID, steamID) is not None:
-        db.child("Users/" + userID + "/Steam Accounts/" + str(steamID)).child("Watched Games").update({gameID: price})
+        db.child("Users/" + userID + "/Steam Accounts/" + str(steamID)).child("Watched Games/" + gameID).update({"Price": price})
         return True
     else:
         return False
@@ -316,13 +316,20 @@ def update_watch_game(userID: str, steamID: int, gameID: str, price: float):
 def get_watch_game_price(userID: str, steamID: int, gameID: str):
     if get_steam_account(userID, steamID) is not None:
         price = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").child(
-            gameID).get().val()
+            gameID + "/Price").get().val()
         return price
     else:
         return "Account not found"
 
+def get_watch_game_ID(userID: str, steamID: int, gameID: str):
+    if get_steam_account(userID, steamID) is not None:
+        appID = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").child(gameID + "/ID").get().val()
+        return appID
+    else:
+        return "Account not found"
 
-def add_watch_game(userID: str, steamID: int, gameID: str, price: float):
+
+def add_watch_game(userID: str, steamID: int, gameID: str, appID: str, price: float):
     """
     This function adds a game to be watched at a certain price
     :param userID: the associated user
@@ -333,7 +340,7 @@ def add_watch_game(userID: str, steamID: int, gameID: str, price: float):
     """
     if get_steam_account(userID, steamID) is not None:
         if check_for_watched(userID, steamID, gameID) is False:
-            db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").update({gameID: price})
+            db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").update({gameID:{"ID": appID, "Price": price}})
             return True
         else:
             return False
