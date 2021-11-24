@@ -16,7 +16,7 @@ cryptography==35.0.0
 Deprecated==1.2.13
 firebase==3.0.1
 Flask==2.0.1
-gcloud==0.18.3
+gcloud==0.17.0
 google-api-core==2.1.1
 google-auth==2.3.0
 google-auth-httplib2==0.1.0
