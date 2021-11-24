@@ -1,5 +1,5 @@
 ﻿amqp
-apscheduler
+apscheduler==3.6.3
 atomicwrites
 attrs
 billiard
