@@ -60,6 +60,7 @@ class Playtime:
             player_service = IPlayerService(steam_api_key=self.steam_api_key)
             games = player_service.get_owned_games(self.steam_id, include_appinfo=True, include_played_free_games=True)[
                 'response']['games']
+            #print(games)
             appids_array = []
             names_array = []
             img_array = []
@@ -83,6 +84,7 @@ class Playtime:
                         daily_playtimes_array.append(-1)
                 """
             steam_info = SteamUser(self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array, monthly_playtimes_array, daily_playtimes_array)
+            #print(steam_info)
             return steam_info
         except SyntaxError:
             print("Error from Steam!")
