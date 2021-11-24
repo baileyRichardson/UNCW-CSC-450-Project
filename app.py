@@ -6,6 +6,7 @@ from flask import *
 import Database
 import DatabaseUse
 #import Notifications
+import Timer
 from Playtime import Playtime
 import userManager
 import accountSettings
@@ -20,6 +21,8 @@ from werkzeug.exceptions import HTTPException
 from pysteamsignin.steamsignin import SteamSignIn
 import DatabaseTest
 import steamStore
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
 
 
 app = Flask(__name__)
@@ -37,6 +40,14 @@ firebaseConfig = {"apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
 
 firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
+
+sched = BackgroundScheduler(daemon=True)
+#sched.add_job(Timer.scheduler_update_database, 'interval',seconds=20)
+sched.add_job(Timer.scheduler_notification_day, 'interval', hours=1)
+sched.start()
+
+#turn off process when app is closed
+atexit.register(lambda: sched.shutdown())
 
 
 @app.route('/', methods=["GET", "POST"])
@@ -71,6 +82,7 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
+    # Database.list_of_users()
     try:
         print(session["user"])
         return render_template("dashboard.html")
@@ -83,6 +95,7 @@ def reports():
     try:
         print(session["user"])
         user_report = Report(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",""))
+        #print("Steam Accounts are",user_report.steam_accounts[0].get_game_info())
         user_report_data = user_report.get_report(reports_page=True)
         return render_template("reports.html", reportData=user_report_data, accountLinked=True)
     except KeyError:
@@ -251,6 +264,8 @@ def settingWatchList():
                 default_price = 00.00
                 gameURL = request.form.get("game") or default_url
                 price = float(request.form.get("price") or default_price)
+                print(gameURL)
+                print(price)
                 add_result = DatabaseUse.add_to_watch_list(authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""),
                                               account, gameURL, price)
                 for a in nested:
