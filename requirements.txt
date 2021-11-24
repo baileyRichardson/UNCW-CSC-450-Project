@@ -51,7 +51,7 @@ py==1.10.0
 pyasn1==0.4.8
 pyasn1-modules==0.2.8
 pycparser==2.20
-pycryptodome==3.11.0
+pycryptodome==3.4.3
 pyee==8.2.2
 PyJWT==2.2.0
 pyparsing==2.4.7
