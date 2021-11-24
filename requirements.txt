@@ -51,7 +51,7 @@ py
 pyasn1
 pyasn1-modules
 pycparser
-pycryptodome
+pycryptodome==3.11.0
 pyee
 PyJWT
 pyparsing
