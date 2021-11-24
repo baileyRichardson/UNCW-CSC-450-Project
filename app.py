@@ -42,7 +42,7 @@ authentication = firebase.auth()
 
 sched = BackgroundScheduler(daemon=True)
 # sched.add_job(Timer.scheduler_update_database, 'interval',seconds=20)
-sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='2', hour='15', minute='20')
+sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='2', hour='15', minute='28')
 sched.start()
 
 # turn off process when app is closed
