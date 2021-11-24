@@ -51,11 +51,10 @@ py
 pyasn1
 pyasn1-modules
 pycparser
-pycryptodome==3.11.0
+pycryptodome
 pyee
 PyJWT
 pyparsing
-Pyrebase
 Pyrebase4
 pytest
 python-jwt
