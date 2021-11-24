@@ -15,7 +15,7 @@ def BB_test_pass_reset(page):
         user_input = page.query_selector('[type="email"]')
         user_input.type("wre9366@uncw.edu")
         time.sleep(0.2)
-        page.query_selector('[type="submit"]').click()
+        page.query_selector('[class="button"]').click()
     except:
         print('Forgot password failed')  # Note: This one actually sometimes passes and sometimes fails? (Bug?)
         # exit()
@@ -31,7 +31,7 @@ def BB_test_login(page):
         user_pass = page.query_selector('[type="password"]')
         user_pass.type("password")
         time.sleep(0.2)
-        page.query_selector('[type="submit"]').click()
+        page.query_selector('[class="button"]').click()
     except:
         print('Failed to login')
 
