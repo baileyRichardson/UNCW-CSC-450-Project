@@ -1,5 +1,5 @@
 ﻿amqp
-APScheduler
+apscheduler
 atomicwrites
 attrs
 billiard
