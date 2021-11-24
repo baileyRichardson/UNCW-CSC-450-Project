@@ -95,7 +95,7 @@ def add_steam_account(userID: str, steamID: int):
     if get_user(userID) is not None:
         new_data = {"On Report": True, "Auto Track": False, "Limit Duration": "week", "Exceeded": False,
                     "Playtime Limit": 0.0, "Total Playtime": 0.0, "Playtimes": {"Temp": 0},
-                    "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": {"ID": 0, "Price": 0}}}
+                    "Tracked Games": {"Temp": 0}, "Watched Games": {"Temp": {"ID": 0, "Price": 0, "Lower Than Threshold": False}}}
         db.child("Users/" + userID + "/Steam Accounts").child(steamID).update(new_data)
         return True
     else:
@@ -313,6 +313,14 @@ def update_watch_game(userID: str, steamID: int, gameID: str, price: float):
         return False
 
 
+def update_watch_game_lower(userID: str, steamID: int, gameID: str, lower_than_threshold: bool):
+    if get_steam_account(userID, steamID) is not None:
+        db.child("Users/" + userID + "/Steam Accounts/" + str(steamID)).child("Watched Games/" + gameID).update({"Lower Than Threshold": lower_than_threshold})
+        return True
+    else:
+        return False
+
+
 def get_watch_game_price(userID: str, steamID: int, gameID: str):
     if get_steam_account(userID, steamID) is not None:
         price = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").child(
@@ -329,6 +337,11 @@ def get_watch_game_ID(userID: str, steamID: int, gameID: str):
         return "Account not found"
 
 
+def get_watch_game_lower(userID: str, steamID: int, gameID: str):
+    if get_steam_account(userID, steamID) is not None:
+        lower_than_threshold = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").child(gameID + "/Lower Than Threshold").get().val()
+
+
 def add_watch_game(userID: str, steamID: int, gameID: str, appID: str, price: float):
     """
     This function adds a game to be watched at a certain price
@@ -340,7 +353,7 @@ def add_watch_game(userID: str, steamID: int, gameID: str, appID: str, price: fl
     """
     if get_steam_account(userID, steamID) is not None:
         if check_for_watched(userID, steamID, gameID) is False:
-            db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").update({gameID:{"ID": appID, "Price": price}})
+            db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").update({gameID:{"ID": appID, "Price": price, "Lower Than Threshold": False}})
             return True
         else:
             return False
@@ -494,6 +507,15 @@ def list_of_playtime_games(userID: str, steamID: int):
         return pList
     else:
         return []
+
+
+def list_of_users():
+    userList = []
+    result = db.child("Users").child().get().val()
+    for key in result.keys():
+        #print(key)
+        userList.append(key)
+    return userList
 
 
 def check_for_playtime(userID: str, steamID: int, gameID: str):

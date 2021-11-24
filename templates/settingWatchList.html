@@ -14,20 +14,18 @@
 {#    </nav>#}
     <main>
         <table>
-            <thead>Currently Watched Games per Accounts</thead>
+            <thead>Currently Watched Games</thead>
             <tbody>
-                {% for result in steam %}
                 <tr>
                     <td>
                         <form method="post">
                             <fieldset>
-                                <legend>Steam Account: {{result}}</legend>
                                 <table>
                                     <tr>
                                         <th>Games being Watched:</th>
                                         <th>Price:</th>
                                     </tr>
-                                    {% for item in nested[loop.index-1] %}
+                                    {% for item in nested[0] %}
                                     <tr>
                                         <td name="old_game{{item}}{{item[0]}}">{{item[0]}}</td>
                                         <td>{{item[1]}}</td>
@@ -65,7 +63,6 @@
                         </form>
                     </td>
                 </tr>
-                {% endfor %}
             </tbody>
         </table>
     </main>

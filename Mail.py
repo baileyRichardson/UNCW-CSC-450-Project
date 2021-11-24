@@ -5,15 +5,15 @@ from Report import Report
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
-def send_email(email : str, frequency : int):
+def send_email(user : str, email : str, frequency : int):
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = "Steam Monitor Report for " + email
     msg["from"] = "noreplySteamMonitor@gmail.com"
     msg["to"] = email
 
-    user_id = "10000"
-    user_report = Report(user_id)
+    #user_id = "10000"
+    user_report = Report(user)
     user_report_text = user_report.get_report(reports_email=True)
 
     html = user_report_text
