@@ -41,10 +41,14 @@ firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
 
 sched = BackgroundScheduler(daemon=True)
-# sched.add_job(Timer.scheduler_update_database, 'interval',seconds=20)
-sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='2', hour='15', minute='28')
+sched.add_job(Timer.scheduler_update_database, 'interval', minutes=15)
+sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='*', hour='*')
+sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week='sat', hour='*')
+# test lines
+# sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week="*",hour="15", minute="45")
+# sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week="*",hour="15", minute="45")
+timer_started = False
 sched.start()
-
 # turn off process when app is closed
 atexit.register(lambda: sched.shutdown())
 
@@ -360,3 +364,4 @@ def signup():
 
 if __name__ == '__main__':
     app.run()
+

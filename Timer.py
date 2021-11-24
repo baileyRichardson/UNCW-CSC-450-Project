@@ -25,24 +25,22 @@ def scheduler_update_database():
 
 
 def scheduler_notification_day():
-    # for each user, check their notification frequency
-    Mail.send_email('matthewjar2000@gmailcom', 'matthewjar2000@gmail.com', 1)
+    #Mail.send_email('matthewjar2000@gmailcom', 'matthewjar2000@gmail.com', 1)
     # Mail.send_email(user,Database.get_email(user),1)
-    # for user in Database.list_of_users():
-    #     try:
-    #         # every day
-    #         if Database.get_notif_time(user) is 1:
-    #             Mail.send_email(Database.get_email(user), 1)
-    #         # every week
-    #         # every two weeks
-    #         # every month
-    #     except:
-    #         print("fuck")
-    # if once a day
-    #   some code
-    # if once a week
-    #   some code
-    # if every 2 weeks
-    #   some code
-    # if once a month
-    #   some code
+    for user in Database.list_of_users():
+        try:
+            # every day
+            if Database.get_notif_time(user) is 1:
+                Mail.send_email('matthewjar2000@gmailcom', Database.get_email('matthewjar2000@gmailcom'), 1)
+        except:
+            print("User does not receive daily notifications")
+
+
+def scheduler_notification_week():
+    for user in Database.list_of_users():
+        try:
+            # every week
+            if Database.get_notif_time(user) is 2:
+                Mail.send_email('matthewjar2000@gmailcom', Database.get_email('matthewjar2000@gmailcom'), 1)
+        except:
+            print("User does not receive weekly notifications")
