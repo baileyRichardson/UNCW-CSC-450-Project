@@ -1,5 +1,10 @@
 """
 Author: William Ebright
+
+Notes:
+    Get a Teammates account with proper report data to test report and watched games?
+    Make Steam account with free games called SteamMonitor for steam linking tests.
+    open web-page in small view?
 """
 from playwright.sync_api import sync_playwright
 import time
