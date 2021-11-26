@@ -21,9 +21,8 @@ class Playtime:
         self.steam_api_key = '25F01C7C51803E91E331CBAD669F542C'
         self.steam_id = steam_user_id
         self.user_email = user_email
-        self.playtimes = Database.list_of_tracked_games(self.user_email, self.steam_id)
         try:
-            self.user_profile = profiles.get_user_profile(steam_user_id)
+            self.user_profile = profiles.get_user_profile(str(steam_user_id))
             if self.user_profile.primaryclanid:
                 # Group ID '103582791429521408' is often encountered.
                 # In hex, that ID is '0x170000000000000' which has 0 in the
@@ -52,7 +51,7 @@ class Playtime:
         except:
             raise SyntaxError("Steam id is invalid")
 
-    def get_game_info(self) -> SteamUser:
+    def get_game_info(self, new_user=False) -> SteamUser:
         """
         This function returns a Steam User's Owned Games as well as the games playtime, appID, and image icon URL.
         :return: A SteamUser object.
@@ -73,14 +72,15 @@ class Playtime:
                 img_array.append(i['img_icon_url'])
                 playtimes_array.append(int(i['playtime_forever']))
                 """
-                if i['name'] in self.playtimes:
-                    daily_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
-                    monthly_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
-                    Database.update_playtime(self.user_email, self.steam_id, i['name'], i['playtime_forever'])
-                    daily_playtimes_array.append(daily_playtime)
-                    monthly_playtimes_array.append(monthly_playtime)
-                else:
-                    daily_playtimes_array.append(-1)
+                if not new_user:
+                    if i['name'] in self.playtimes:
+                        daily_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
+                        monthly_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
+                        Database.update_playtime(self.user_email, self.steam_id, i['name'], i['playtime_forever'])
+                        daily_playtimes_array.append(daily_playtime)
+                        monthly_playtimes_array.append(monthly_playtime)
+                    else:
+                        daily_playtimes_array.append(-1)
                 """
             steam_info = SteamUser(self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array, monthly_playtimes_array, daily_playtimes_array)
             return steam_info

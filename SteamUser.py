@@ -1,4 +1,5 @@
 class SteamUser:
+
     def __init__(self, steam_id: int, steam_name: str, app_ids: [int], names: [str], img_icons: [str],
                  playtimes: [int], monthly_playtimes: [int], daily_playtimes: [int]):
         self.__steam_id = steam_id
@@ -34,7 +35,7 @@ class SteamUser:
     def get_game_names(self) -> [str]:
         """
         Returns the array of game names.
-        :return:
+        :return: String array of game names.
         """
         return self.__name_array
 
