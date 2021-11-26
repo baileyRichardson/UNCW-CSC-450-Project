@@ -60,31 +60,40 @@ class Playtime:
             player_service = IPlayerService(steam_api_key=self.steam_api_key)
             games = player_service.get_owned_games(self.steam_id, include_appinfo=True, include_played_free_games=True)[
                 'response']['games']
-            #print(games)
+            directory_games = Database.list_of_playtime_games(self.user_email, self.steam_id)
+            tracked_games = Database.list_of_tracked_games(self.user_email, self.steam_id)
             appids_array = []
             names_array = []
             img_array = []
             playtimes_array = []
             daily_playtimes_array = []
-            monthly_playtimes_array = []
+            weekly_playtimes_array = []
             for i in games:
                 appids_array.append(int(i['appid']))
                 names_array.append(i['name'])
                 img_array.append(i['img_icon_url'])
                 playtimes_array.append(int(i['playtime_forever']))
-                """
                 if not new_user:
-                    if i['name'] in self.playtimes:
-                        daily_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
-                        monthly_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
-                        Database.update_playtime(self.user_email, self.steam_id, i['name'], i['playtime_forever'])
-                        daily_playtimes_array.append(daily_playtime)
-                        monthly_playtimes_array.append(monthly_playtime)
+                    if i['name'] in directory_games:
+                        Database.update_playtime(i['name'], self.user_email, self.steam_id, i['playtime_forever'])
                     else:
+                        Database.add_game(
+                            i['name'], self.user_email, self.steam_id, total_playtime=i['playtime_forever']
+                        )
+                    if i['name'] in tracked_games:
+                        weekly_playtimes_array.append(
+                            Database.get_weekly_playtime(i['name'], self.user_email, self.steam_id)
+                        )
+                        daily_playtimes_array.append(
+                            Database.get_daily_playtime(i['name'], self.user_email, self.steam_id)
+                        )
+                    else:
+                        weekly_playtimes_array.append(-1)
                         daily_playtimes_array.append(-1)
-                """
-            steam_info = SteamUser(self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array, monthly_playtimes_array, daily_playtimes_array)
-            #print(steam_info)
+            steam_info = SteamUser(
+                self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array,
+                weekly_playtimes_array, daily_playtimes_array
+            )
             return steam_info
         except SyntaxError:
             print("Error from Steam!")
