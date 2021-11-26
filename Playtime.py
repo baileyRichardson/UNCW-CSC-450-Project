@@ -1,11 +1,8 @@
 """
 Authors: William Ebright, Adan Narvaez Munguia
 """
-import requests
-from flask import json
 from steamwebapi import profiles
-from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, ISteamWebAPIUtil, SteamCommunityXML
-import steamspypi
+from steamwebapi.api import ISteamUser, IPlayerService
 
 
 # from steam.steamid import SteamID  # Possibly useful later; Ignore for now.
