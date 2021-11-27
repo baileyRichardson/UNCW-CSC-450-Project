@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from firebase import firebase
 import pyrebase
 
+from steamStore import SteamStore
+
 firebaseConfig = {"apiKey": "AIzaSyB7UiA-ZyjEO-wO-9ofk9BzPId9wRe_ENs",
                   "authDomain": "csc-450-group-5-project.firebaseapp.com",
                   "databaseURL": "https://csc-450-group-5-project-default-rtdb.firebaseio.com",
@@ -340,6 +342,9 @@ def get_watch_game_ID(userID: str, steamID: int, gameID: str):
 def get_watch_game_lower(userID: str, steamID: int, gameID: str):
     if get_steam_account(userID, steamID) is not None:
         lower_than_threshold = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Watched Games").child(gameID + "/Lower Than Threshold").get().val()
+        return lower_than_threshold
+    else:
+        return False
 
 
 def add_watch_game(userID: str, steamID: int, gameID: str, appID: str, price: float):
@@ -467,9 +472,32 @@ def list_of_watched_games(userID: str, steamID: int):
                 subList = []
                 subList.append(key)
                 price = get_watch_game_price(userID, steamID, key)
+                sale = get_watch_game_lower(userID, steamID, key)
                 subList.append(price)
+                subList.append(sale)
                 wgList.append(subList)
         return wgList
+    else:
+        return []
+
+
+def list_of_sale_games(userID: str, steamID: int):
+    #print("beans")
+    sgList = []
+    if list_of_watched_games(userID, steamID) is not []:
+        for game in list_of_watched_games(userID, steamID):
+            #print(game)
+            if game[2] is True:
+                subList = []
+                subList.append(game[0])
+                steam_store_game = SteamStore.get_app_details(get_watch_game_ID(userID, steamID, game[0]))
+                steam_store_price = float(steam_store_game.get('price'))
+                steam_store_price /= 100
+                steam_store_price = steam_store_price.__round__(1)
+                print(steam_store_price)
+                subList.append(steam_store_price)
+                sgList.append(subList)
+        return sgList
     else:
         return []
 

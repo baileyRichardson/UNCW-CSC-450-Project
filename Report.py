@@ -83,6 +83,7 @@ class Report:
         steam_account: SteamUser
         for steam_account in self.report:
             game_names = steam_account.get_game_names()
+            sale_games = Database.list_of_sale_games(self.user, steam_account.get_steam_id())
             total_playtimes = steam_account.get_playtimes()
             email_text = email_text + (
                 f'            <h2>Account: {steam_account.get_steam_name()}</h2>\n'
@@ -100,6 +101,21 @@ class Report:
                     f'                    </tr>\n'
                 )
             email_text = email_text + f'                </table>\n'
+            email_text = email_text + (
+                f'              <h2>Games on Sale:</h2>\n'
+                f'              <table>\n'
+                f'                  <tr>\n'
+                f'                    <th>Game</th>\n'
+                f'                    <th>Current Store Price</th>\n'
+                f'                  </tr>\n'
+            )
+            for j in range(len(sale_games)):
+                email_text = email_text + (
+                    f'                  <tr>\n'
+                    f'                      <td>{sale_games[j][0]}</td>\n'
+                    f'                      <td>{sale_games[j][1]}</td>\n'
+                    f'                  </tr>\n'
+                )
         email_text = email_text + (
             f'    </body>\n'
             f'</html>\n'

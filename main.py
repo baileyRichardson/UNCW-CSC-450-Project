@@ -41,14 +41,13 @@ firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(Timer.scheduler_update_database, 'interval', minutes=15)
-sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='*', hour='*')
-sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week='sat', hour='*')
+# sched.add_job(Timer.scheduler_update_database, 'interval', minutes=15)
+sched.add_job(Timer.scheduler_notification_day, 'cron', hour=18, minute=22, misfire_grace_time=None)
+sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week='sat', hour=15, misfire_grace_time=None)
 # test lines
 # sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week="*",hour="15", minute="45")
 # sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week="*",hour="15", minute="45")
 timer_started = False
-sched.start()
 # turn off process when app is closed
 atexit.register(lambda: sched.shutdown())
 
@@ -85,7 +84,6 @@ def login():
 
 @app.route('/dashboard/')
 def dashboard():
-    # Database.list_of_users()
     try:
         print(session["user"])
         return render_template("dashboard.html")
@@ -363,5 +361,6 @@ def signup():
 
 
 if __name__ == '__main__':
+    sched.start()
     app.run()
 

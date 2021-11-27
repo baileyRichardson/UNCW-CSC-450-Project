@@ -25,12 +25,13 @@ def scheduler_update_database():
 
 
 def scheduler_notification_day():
+    print("Daily notification triggered")
     #Mail.send_email('matthewjar2000@gmailcom', 'matthewjar2000@gmail.com', 1)
     # Mail.send_email(user,Database.get_email(user),1)
     for user in Database.list_of_users():
         try:
             # every day
-            if Database.get_notif_time(user) is 1:
+            if Database.get_notif_time(user) == 1:
                 Mail.send_email('matthewjar2000@gmailcom', Database.get_email('matthewjar2000@gmailcom'), 1)
         except:
             print("User does not receive daily notifications")
@@ -40,7 +41,7 @@ def scheduler_notification_week():
     for user in Database.list_of_users():
         try:
             # every week
-            if Database.get_notif_time(user) is 2:
+            if Database.get_notif_time(user) == 2:
                 Mail.send_email('matthewjar2000@gmailcom', Database.get_email('matthewjar2000@gmailcom'), 1)
         except:
             print("User does not receive weekly notifications")
