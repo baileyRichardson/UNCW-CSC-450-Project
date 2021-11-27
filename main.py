@@ -41,7 +41,7 @@ firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
 
 sched = BackgroundScheduler(daemon=True)
-sched.add_job(Timer.scheduler_update_database, 'interval', minutes=15)
+# sched.add_job(Timer.scheduler_update_database, 'interval', minutes=15)
 sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='*', hour='*')
 sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week='sat', hour='*')
 # test lines
