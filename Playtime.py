@@ -60,8 +60,6 @@ class Playtime:
             player_service = IPlayerService(steam_api_key=self.steam_api_key)
             games = player_service.get_owned_games(self.steam_id, include_appinfo=True, include_played_free_games=True)[
                 'response']['games']
-            directory_games = Database.list_of_playtime_games(self.user_email, self.steam_id)
-            tracked_games = Database.list_of_tracked_games(self.user_email, self.steam_id)
             appids_array = []
             names_array = []
             img_array = []
@@ -74,6 +72,8 @@ class Playtime:
                 img_array.append(i['img_icon_url'])
                 playtimes_array.append(int(i['playtime_forever']))
                 if not new_user:
+                    directory_games = Database.list_of_playtime_games(self.user_email, self.steam_id)
+                    tracked_games = Database.list_of_tracked_games(self.user_email, self.steam_id)
                     if i['name'] in directory_games:
                         Database.update_playtime(i['name'], self.user_email, self.steam_id, i['playtime_forever'])
                     else:
