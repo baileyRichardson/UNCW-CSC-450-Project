@@ -41,13 +41,15 @@ firebase = pyrebase.initialize_app(firebaseConfig)
 authentication = firebase.auth()
 
 sched = BackgroundScheduler(daemon=True)
+# will check for if a game is beneath a price
 # sched.add_job(Timer.scheduler_update_database, 'interval', minutes=15)
-sched.add_job(Timer.scheduler_notification_day, 'cron', hour=18, minute=22, misfire_grace_time=None)
+# send out notifications
+sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='sat', hour=18, minute=34, misfire_grace_time=None)
+sched.add_job(Timer.scheduler_notification_day, 'cron', hour=20, minute=22, misfire_grace_time=None)
 sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week='sat', hour=15, misfire_grace_time=None)
 # test lines
 # sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week="*",hour="15", minute="45")
-# sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week="*",hour="15", minute="45")
-timer_started = False
+# sched.add_job(Timer.sc# timer_started = Falseheduler_notification_week, 'cron', day_of_week="*",hour="15", minute="45")
 # turn off process when app is closed
 atexit.register(lambda: sched.shutdown())
 
