@@ -42,8 +42,8 @@ authentication = firebase.auth()
 
 sched = BackgroundScheduler(daemon=True)
 # sched.add_job(Timer.scheduler_update_database, 'interval', minutes=15)
-sched.add_job(Timer.scheduler_notification_day, 'cron', minute=30, misfire_grace_time=None)
-sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week='sat', hour='15', misfire_grace_time=None)
+sched.add_job(Timer.scheduler_notification_day, 'cron', hour=18, minute=22, misfire_grace_time=None)
+sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week='sat', hour=15, misfire_grace_time=None)
 # test lines
 # sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week="*",hour="15", minute="45")
 # sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week="*",hour="15", minute="45")

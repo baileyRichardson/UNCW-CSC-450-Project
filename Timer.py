@@ -25,7 +25,7 @@ def scheduler_update_database():
 
 
 def scheduler_notification_day():
-    print("fuck")
+    print("Daily notification triggered")
     #Mail.send_email('matthewjar2000@gmailcom', 'matthewjar2000@gmail.com', 1)
     # Mail.send_email(user,Database.get_email(user),1)
     for user in Database.list_of_users():
