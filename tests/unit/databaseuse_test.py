@@ -61,5 +61,3 @@ def run_all():
     test_remove_steam_account()
     test_add_to_watchlist()
     test_add_steam_account()
-
-run_all()

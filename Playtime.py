@@ -1,11 +1,8 @@
 """
 Authors: William Ebright, Adan Narvaez Munguia
 """
-import requests
-from flask import json
 from steamwebapi import profiles
-from steamwebapi.api import ISteamUser, IPlayerService, ISteamUserStats, ISteamWebAPIUtil, SteamCommunityXML
-import steamspypi
+from steamwebapi.api import ISteamUser, IPlayerService
 
 
 # from steam.steamid import SteamID  # Possibly useful later; Ignore for now.
@@ -24,9 +21,8 @@ class Playtime:
         self.steam_api_key = '25F01C7C51803E91E331CBAD669F542C'
         self.steam_id = steam_user_id
         self.user_email = user_email
-        self.playtimes = Database.list_of_tracked_games(self.user_email, self.steam_id)
         try:
-            self.user_profile = profiles.get_user_profile(steam_user_id)
+            self.user_profile = profiles.get_user_profile(str(steam_user_id))
             if self.user_profile.primaryclanid:
                 # Group ID '103582791429521408' is often encountered.
                 # In hex, that ID is '0x170000000000000' which has 0 in the
@@ -55,7 +51,7 @@ class Playtime:
         except:
             raise SyntaxError("Steam id is invalid")
 
-    def get_game_info(self) -> SteamUser:
+    def get_game_info(self, new_user=False) -> SteamUser:
         """
         This function returns a Steam User's Owned Games as well as the games playtime, appID, and image icon URL.
         :return: A SteamUser object.
@@ -64,30 +60,40 @@ class Playtime:
             player_service = IPlayerService(steam_api_key=self.steam_api_key)
             games = player_service.get_owned_games(self.steam_id, include_appinfo=True, include_played_free_games=True)[
                 'response']['games']
-            #print(games)
             appids_array = []
             names_array = []
             img_array = []
             playtimes_array = []
             daily_playtimes_array = []
-            monthly_playtimes_array = []
+            weekly_playtimes_array = []
             for i in games:
                 appids_array.append(int(i['appid']))
                 names_array.append(i['name'])
                 img_array.append(i['img_icon_url'])
                 playtimes_array.append(int(i['playtime_forever']))
-                """
-                if i['name'] in self.playtimes:
-                    daily_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
-                    monthly_playtime = i['playtime_forever'] - int(Database.get_playtime(self.user_email, self.steam_id, i['name']))
-                    Database.update_playtime(self.user_email, self.steam_id, i['name'], i['playtime_forever'])
-                    daily_playtimes_array.append(daily_playtime)
-                    monthly_playtimes_array.append(monthly_playtime)
-                else:
-                    daily_playtimes_array.append(-1)
-                """
-            steam_info = SteamUser(self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array, monthly_playtimes_array, daily_playtimes_array)
-            #print(steam_info)
+                if not new_user:
+                    directory_games = Database.list_of_playtime_games(self.user_email, self.steam_id)
+                    tracked_games = Database.list_of_tracked_games(self.user_email, self.steam_id)
+                    if i['name'] in directory_games:
+                        Database.update_playtime(i['name'], self.user_email, self.steam_id, i['playtime_forever'])
+                    else:
+                        Database.add_game(
+                            i['name'], self.user_email, self.steam_id, total_playtime=i['playtime_forever']
+                        )
+                    if i['name'] in tracked_games:
+                        weekly_playtimes_array.append(
+                            Database.get_weekly_playtime(i['name'], self.user_email, self.steam_id)
+                        )
+                        daily_playtimes_array.append(
+                            Database.get_daily_playtime(i['name'], self.user_email, self.steam_id)
+                        )
+                    else:
+                        weekly_playtimes_array.append(-1)
+                        daily_playtimes_array.append(-1)
+            steam_info = SteamUser(
+                self.steam_id, self.get_display_name(), appids_array, names_array, img_array, playtimes_array,
+                weekly_playtimes_array, daily_playtimes_array
+            )
             return steam_info
         except SyntaxError:
             print("Error from Steam!")
