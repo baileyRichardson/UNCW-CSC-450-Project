@@ -7,7 +7,7 @@ from SteamUser import SteamUser
 
 
 def test_instantiate_report():
-    # "10000" corresponds to a test user. user_id is usually an email.
+    # "10000" corresponds to a test user. user_email is usually an email.
     user_id = "10000"
     # Instantiating a report object
     test_report = Report(user_id)
@@ -22,7 +22,7 @@ def test_instantiate_report_id_not_found():
 
 
 def test_generate_report():
-    # "10000" corresponds to a test user. user_id is usually an email.
+    # "10000" corresponds to a test user. user_email is usually an email.
     user_id = "10000"
     # Instantiating a report object
     test_report = Report(user_id)

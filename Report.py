@@ -60,8 +60,6 @@ class Report:
         Pulls the report data from the SteamAPI.
         :return: No return value, but the data is stored in self.report.
         """
-        account_names = self.list_steam_accounts()
-        account_index = 0
         steam_games = []
         for account in self.steam_accounts:
             steam_data = self.__get_games(account)
