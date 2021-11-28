@@ -25,6 +25,11 @@ class UserNotFoundException(Exception):
         super().__init__(self.message)
 
 
+def scrub_name(name: str):
+    translation_table = dict.fromkeys(map(ord, '!@#$'), None)
+    return name.translate(translation_table)
+
+
 def get_user(userID: str):
     """
     This function returns a reference to the user object, good for checking for a user in the database
@@ -106,28 +111,29 @@ def add_steam_account(userID: str, steamID: int):
         game_names = steam_user.get_game_names()
         playtimes = steam_user.get_playtimes()
         for i in range(len(game_names)):
-            game_dict[game_names[i]] = {
+            game_dict[scrub_name(game_names[i])] = {
                 "Tracked": False,
                 "Total Playtime": playtimes[i],
                 "Weekly Playtime": -1,
                 "Daily Playtime": -1
             }
-        new_data = {"On Report": True,
-                    "Auto Track": False,
-                    "Limit Duration": "week",
-                    "Playtime Limit": 0,
-                    "Exceeded": False,
-                    "Total Weekly Playtime": 0,
-                    "Total Daily Playtime": 0,
-                    "Watched Games": {
-                        "Temp": {
-                            "ID": 0,
-                            "Price": 0,
-                            "Lower Than Threshold": False
-                        }
-                    },
-                    "Game Tracking": game_dict
-                    }
+        new_data = {
+            "On Report": True,
+            "Auto Track": False,
+            "Limit Duration": "week",
+            "Playtime Limit": 0,
+            "Exceeded": False,
+            "Total Weekly Playtime": 0,
+            "Total Daily Playtime": 0,
+            "Watched Games": {
+                "Temp": {
+                    "ID": 0,
+                    "Price": 0,
+                    "Lower Than Threshold": False
+                }
+            },
+            "Game Tracking": game_dict
+        }
         db.child("Users/" + userID + "/Steam Accounts").child(steamID).update(new_data)
         return True
     else:
@@ -275,6 +281,7 @@ def game_exists(game_name: str, user_email: str, steam_id: int):
     :param steam_id: The steam ID associated with the user.
     :return: True if the game is present, False if it is not.
     """
+    game_name = scrub_name(game_name)
     if get_steam_account(user_email, steam_id) is not None:
         found = False
         if db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) + "/Game Tracking").child(
@@ -294,6 +301,7 @@ def add_game(game_name: str, user_email: str, steam_id: int, total_playtime=0):
     :param total_playtime: The game's total playtime.
     :return: True for success, False otherwise.
     """
+    game_name = scrub_name(game_name)
     if game_exists(game_name, user_email, steam_id):
         RuntimeWarning("System attempting to add a game that already exists.")
     else:
@@ -314,6 +322,7 @@ def game_tracked(game_name: str, user_email: str, steam_id: int):
     :param steam_id: The steam ID.
     :return: True if the game is being tracked, False if it's not.
     """
+    game_name = scrub_name(game_name)
     if get_steam_account(user_email, steam_id) is not None:
         return db.child(
             "Users/" + user_email + "/Steam Accounts/" + str(steam_id) + "/Game Tracking/" + game_name +
@@ -333,6 +342,7 @@ def add_tracked_game(game_name: str, user_email: str, steam_id: int):
     :param steam_id: the steam account
     :return: True for success, False if the game is already tracked
     """
+    game_name = scrub_name(game_name)
     if not game_tracked(game_name, user_email, steam_id):
         db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) +
                  "/Game Tracking").child(game_name).update({"Tracked": True,
@@ -354,6 +364,7 @@ def remove_tracked_game(game_name: str, user_email: str, steam_id: int):
     :param steam_id: the steam account
     :return: True for success, False if the game is already not tracked
     """
+    game_name = scrub_name(game_name)
     if game_tracked(game_name, user_email, steam_id):
         db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) +
                  "/Game Tracking").child(game_name).update({"Tracked": False,
@@ -459,6 +470,7 @@ def get_playtime(game_name: str, user_email: str, steam_id: int) -> int:
     :param game_name: the game to be retrieved
     :return: The playtime if success.
     """
+    game_name = scrub_name(game_name)
     if get_steam_account(user_email, steam_id) is not None:
         playtime = db.child("Users/" + user_email + "/Steam Accounts/" + str(
             steam_id) + "/Game Tracking/" + game_name).child("Total Playtime").get().val()
@@ -476,6 +488,7 @@ def get_weekly_playtime(game_name: str, user_email: str, steam_id: int) -> int:
     :param game_name: the game to be retrieved
     :return: The playtime if success.
     """
+    game_name = scrub_name(game_name)
     if get_steam_account(user_email, steam_id) is not None:
         playtime = db.child("Users/" + user_email + "/Steam Accounts/" + str(
             steam_id) + "/Game Tracking/" + game_name).child("Weekly Playtime").get().val()
@@ -493,6 +506,7 @@ def get_daily_playtime(game_name: str, user_email: str, steam_id: int) -> int:
     :param game_name: the game to be retrieved
     :return: The playtime if success.
     """
+    game_name = scrub_name(game_name)
     if get_steam_account(user_email, steam_id) is not None:
         playtime = db.child("Users/" + user_email + "/Steam Accounts/" + str(
             steam_id) + "/Game Tracking/" + game_name).child("Daily Playtime").get().val()
@@ -511,6 +525,7 @@ def update_playtime(game_name: str, user_email: str, steam_id: int, new_time: in
     :param new_time: the new playtime
     :return: True for success, False for failure
     """
+    game_name = scrub_name(game_name)
     if get_steam_account(user_email, steam_id) is not None:
         if game_tracked(game_name, user_email, steam_id):
             last_known_time = get_playtime(game_name, user_email, steam_id)
@@ -637,27 +652,6 @@ def list_of_users():
         #print(key)
         userList.append(key)
     return userList
-
-
-def check_for_playtime(userID: str, steamID: int, gameID: str):
-    """
-    This function checks if a game's playtime has ever been recorded
-    :param userID: the associated user
-    :param steamID: the steam account
-    :param gameID: the game being checked
-    :return: True if the game has playtime information, False if it doesn't
-    """
-    if get_steam_account(userID, steamID) is not None:
-        found = False
-        if db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Playtimes").child(
-                gameID).get().val() is not None:
-            found = True
-            print(gameID + " has Playtime information")
-        else:
-            print(gameID + " has no Playtime information")
-        return found
-    else:
-        return False
 
 
 def check_for_watched(userID: str, steamID: int, gameID: str):
