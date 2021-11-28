@@ -23,7 +23,7 @@ def send_email(user : str, email : str, frequency : int):
     msg.attach(html_msg)
 
     try:
-        with smtplib.SMTP_SSL("smtp.gmail.com", 587) as smtp:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
 
             smtp.login("noreplySteamMonitor@gmail.com", "UNCWcsc450")
 
