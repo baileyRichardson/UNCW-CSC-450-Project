@@ -23,6 +23,7 @@ import DatabaseTest
 import steamStore
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
+import Mail
 
 app = Flask(__name__)
 key = os.urandom(12).hex()
@@ -64,6 +65,7 @@ def login():
             user = authentication.refresh(user['refreshToken'])
             user_token = user["idToken"]
             session["user"] = user_token
+            Mail.send_email('tanareva123@gmailcom', 'tanareva123@gmail.com', 1)
             return render_template("dashboard.html")
         except requests.HTTPError as exception:
             error_json = exception.args[1]
