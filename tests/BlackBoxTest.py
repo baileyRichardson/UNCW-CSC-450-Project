@@ -2,9 +2,8 @@
 Author: William Ebright
 
 Notes:
-    Get a Teammates account with proper report data to test report and watched games?
     Make Steam account with free games called SteamMonitor for steam linking tests.
-    open web-page in small view?
+    open web-page in small view? <-- possible test?
 """
 from playwright.sync_api import sync_playwright
 import time
@@ -23,8 +22,8 @@ def BB_test_pass_reset(page):
         time.sleep(0.2)
         page.query_selector('[class="button"]').click()
     except:
-        print('Forgot password failed')  # Note: This one actually sometimes passes and sometimes fails? (Bug?)
-        # exit()
+        print('Forgot password failed')
+        # exit()  # added if we want a failed test to result if total failure
 
 
 def BB_test_login(page):
@@ -33,10 +32,10 @@ def BB_test_login(page):
         # page.goto('http://127.0.0.1:5000/')  # Must start at login screen (local)
         page.goto('https://app-l47rwjgwkq-ue.a.run.app/')  # Must start at login screen (webapp)
         user_email = page.query_selector('[type="email"]')
-        user_email.type("wre9366@uncw.edu")
+        user_email.type("wre9366@uncw.edu")  # "tanareva123@gmail.com" <-- for properly testing reports
         time.sleep(0.2)
         user_pass = page.query_selector('[type="password"]')
-        user_pass.type("password")
+        user_pass.type("password")  # also just "password" <-- for properly testing reports
         time.sleep(0.2)
         page.query_selector('[class="button"]').click()
     except:
