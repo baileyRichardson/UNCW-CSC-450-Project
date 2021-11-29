@@ -13,7 +13,8 @@ import time
 def BB_test_pass_reset(page):
     try:
         print("\nCurrently testing password reset")
-        page.goto('http://127.0.0.1:5000/')  # Must start at login screen
+        # page.goto('http://127.0.0.1:5000/')  # Must start at login screen
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/')  # Must start at login screen (webapp)
         forgot_pass = page.query_selector('[href="/forgotPass/"]')
         forgot_pass.click()
         time.sleep(0.2)
@@ -29,7 +30,8 @@ def BB_test_pass_reset(page):
 def BB_test_login(page):
     try:
         print("\nCurrently testing login page")
-        page.goto('http://127.0.0.1:5000/')  # Must start at login screen
+        # page.goto('http://127.0.0.1:5000/')  # Must start at login screen (local)
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/')  # Must start at login screen (webapp)
         user_email = page.query_selector('[type="email"]')
         user_email.type("wre9366@uncw.edu")
         time.sleep(0.2)
@@ -44,7 +46,8 @@ def BB_test_login(page):
 def BB_test_reports(page):
     try:
         print("\nCurrently testing reports page")
-        page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
+        # page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard (local)
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/dashboard/')  # Must start at dashboard (webapp)
         page.query_selector('[href="/reports/"]').click()
         time.sleep(0.2)
         report = page.query_selector_all('[class="test"]')  # checks if games are there
@@ -57,16 +60,17 @@ def BB_test_reports(page):
 def BB_test_steam_link_notLogged(page):
     try:
         print("\nCurrently testing steam-linking")
-        page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
+        # page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard (local)
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/dashboard/')  # Must start at dashboard (webapp)
         page.hover('[href="#"]')
         time.sleep(0.2)
         page.query_selector('[href="/settingSteamAccount"]').click()
         time.sleep(0.2)
         page.query_selector('[href="test/?test=true"]').click()
         time.sleep(0.2)
-        page.query_selector('[id = "steamAccountName"]').click().type("SteamMonitor")
+        page.query_selector('[id="steamAccountName"]').click().type("SteamMonitor")
         time.sleep(0.2)
-        page.query_selector('[id = "steamPassword"]').click().type("St3@mM0n1t0r")
+        page.query_selector('[id="steamPassword"]').click().type("St3@mM0n1t0r")
         page.query_selector('[id="imageLogin"]').click()  # if ALREADY logged in, will fail here for now.
     except:
         print('Unsuccessful steam linking')
@@ -75,7 +79,8 @@ def BB_test_steam_link_notLogged(page):
 def BB_test_steam_link_logged(page):
     try:
         print("\nCurrently testing steam-linking")
-        page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
+        # page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard (local)
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/dashboard/')  # Must start at dashboard (webapp)
         page.hover('[href="#"]')
         time.sleep(0.2)
         page.query_selector('[href="/settingSteamAccount"]').click()
@@ -90,8 +95,8 @@ def BB_test_steam_link_logged(page):
 def BB_test_set_notification(page):  # somethings got a bug here
     try:
         print("\nCurrently testing notification settings")
-        page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
-        # page.query_selector('[href = "/settingSteamAccount"]').click()
+        # page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard (local)
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/dashboard/')  # Must start at dashboard (webapp)
         page.hover('[href="#"]')
         page.query_selector('[href="/settingNotifications"]').click()
         page.query_selector('[name="often"]').click()  # ask about this in class?
@@ -106,7 +111,8 @@ def BB_test_set_notification(page):  # somethings got a bug here
 def BB_test_watched_games(page):
     try:
         print("\nCurrently testing adding watched games")
-        page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
+        # page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard (local)
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/dashboard/')  # Must start at dashboard (webapp)
         page.hover('[href="#"]')
         page.query_selector('[href="/settingWatchList"]').click()
         user_game = page.query_selector('[type="text"]').click()
@@ -122,7 +128,8 @@ def BB_test_watched_games(page):
 def BB_test_signup_page(page, email, password):
     try:
         print("\nCurrently testing signup page")
-        page.goto('http://127.0.0.1:5000/')  # Must start at login screen
+        # page.goto('http://127.0.0.1:5000/')  # Must start at login screen (local)
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/')  # Must start at login screen (webapp)
         page.query_selector('[href="/signup/"]').click()
         time.sleep(0.2)
         user_input = page.query_selector('[type="email"]')
@@ -140,11 +147,12 @@ def BB_test_signup_page(page, email, password):
 
 
 def main():
-    # Testing all 7 user stories marked as "Done" and can be BB tested + all login screen possibilities.
+    # Testing all user stories marked as "Done" and can be BB tested + all login screen possibilities.
     with sync_playwright() as p:
         browser = p.firefox.launch(headless=False)  # needs to be firefox in class.
         page = browser.new_page()
-        page.goto('http://127.0.0.1:5000/')  # ('http://127.0.0.1:5000/') <--login screen
+        # page.goto('http://127.0.0.1:5000/')  # <--login screen on local
+        page.goto('https://app-l47rwjgwkq-ue.a.run.app/')  #  <--login screen on webapp
 
         heading_title_selector = '//h1'
         print(page.query_selector(heading_title_selector))  # click on title and print
