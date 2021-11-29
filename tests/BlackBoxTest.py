@@ -1,5 +1,10 @@
 """
 Author: William Ebright
+
+Notes:
+    Get a Teammates account with proper report data to test report and watched games?
+    Make Steam account with free games called SteamMonitor for steam linking tests.
+    open web-page in small view?
 """
 from playwright.sync_api import sync_playwright
 import time
@@ -49,7 +54,25 @@ def BB_test_reports(page):
         print('No games on reports page (yet?)')
 
 
-def BB_test_steam_link(page):
+def BB_test_steam_link_notLogged(page):
+    try:
+        print("\nCurrently testing steam-linking")
+        page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
+        page.hover('[href="#"]')
+        time.sleep(0.2)
+        page.query_selector('[href="/settingSteamAccount"]').click()
+        time.sleep(0.2)
+        page.query_selector('[href="test/?test=true"]').click()
+        time.sleep(0.2)
+        page.query_selector('[id = "steamAccountName"]').click().type("SteamMonitor")
+        time.sleep(0.2)
+        page.query_selector('[id = "steamPassword"]').click().type("St3@mM0n1t0r")
+        page.query_selector('[id="imageLogin"]').click()  # if ALREADY logged in, will fail here for now.
+    except:
+        print('Unsuccessful steam linking')
+
+
+def BB_test_steam_link_logged(page):
     try:
         print("\nCurrently testing steam-linking")
         page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
@@ -78,6 +101,22 @@ def BB_test_set_notification(page):  # somethings got a bug here
         page.query_selector('[value="Submit changes"]').click()
     except:
         print('Unsuccessful Notification setting')
+
+
+def BB_test_watched_games(page):
+    try:
+        print("\nCurrently testing adding watched games")
+        page.goto('http://127.0.0.1:5000/dashboard/')  # Must start at dashboard
+        page.hover('[href="#"]')
+        page.query_selector('[href="/settingWatchList"]').click()
+        user_game = page.query_selector('[type="text"]').click()
+        user_game.type("https://store.steampowered.com/app/1252330/DEATHLOOP/")
+        time.sleep(2)
+        page.query_selector('[type="number"]').click().type("50.00")
+        time.sleep(0.2)
+        page.query_selector('[type="submit"]').click()
+    except:
+        print('Unsuccessful adding watched game')
 
 
 def BB_test_signup_page(page, email, password):
@@ -110,29 +149,37 @@ def main():
         heading_title_selector = '//h1'
         print(page.query_selector(heading_title_selector))  # click on title and print
 
-        # 1st user story: I want to be able to sign up for an account; should pass
+        # 1st user story: I want to be able to sign up for an account; should pass (1)
         BB_test_signup_page(page, "someguy@gmail.com", "password")
         time.sleep(2)
-        # 2nd user story:  I want to be able to sign up for an account (but already exists); should fail
+        # 2nd user story:  I want to be able to sign up for an account (but already exists); should fail (2)
         BB_test_signup_page(page, "someguy@gmail.com", "password")
         time.sleep(2)
-        # 3rd user story: I want to recover/change my lost password; should pass
+        # 3rd user story: I want to recover/change my lost password; should pass (3)
         BB_test_pass_reset(page)
         time.sleep(2)  # We wait 2 seconds because the website just can't handle the fast inputs.
-        # 4th user story: I want to be able to log in to the application; should pass
+        # 4th user story: I want to be able to log in to the application; should pass (4)
         BB_test_login(page)
         time.sleep(2)
-        # 5th user story: I want to see reports page; should fail
+        # 5th user story: I want to see reports page; should fail (5)
         BB_test_reports(page)
         time.sleep(2)
-        # 6th user story: I want to link my steam account to the application; should "pass" if already logged to steam
-        BB_test_steam_link(page)
+        # 6th user story: I want to link my steam account to the application; should "pass" if already logged to
+        # steam (6)
+        BB_test_steam_link_notLogged(page)
         time.sleep(2)
-        # 5th user story: I want to see reports page (Again); should "pass" this time but not fully implemented
+        # 6th user story: I want to link my steam account to the application; should "pass" if already logged to
+        # steam (7)
+        BB_test_steam_link_logged(page)
+        time.sleep(2)
+        # 5th user story: I want to see reports page (Again); should "pass" this time but not fully implemented (8)
         BB_test_reports(page)
         time.sleep(2)
-        # 7th user story: As a steam user I want to navigate to the notification settings tab to create a reminder; P
+        # 7th user story: As a steam user I want to navigate to the notification settings tab to create a reminder; (9)
         BB_test_set_notification(page)
+        time.sleep(2)
+        # 8th user story: As a steam user I want to be notified when a game goes below my watched amount (10)
+        BB_test_watched_games(page)
 
         page.wait_for_timeout(60000)  # this is in milliseconds, total 60 seconds.
 
