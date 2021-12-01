@@ -1,4 +1,5 @@
 steps:
+# Testing for auto deploy after build
 # Build the container image
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/csc-450-group-5-project/gcr.io/csc-450-group-5-project/github.com/uncw-csc-450/software-engineering-team-project-team-5:$COMMIT_SHA', '.']
