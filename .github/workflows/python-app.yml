@@ -11,7 +11,8 @@ on:
 
 jobs:
   build:
-
+    env:
+        STEAM_API_KEY: 25F01C7C51803E91E331CBAD669F542C
     runs-on: ubuntu-latest
 
     steps:
