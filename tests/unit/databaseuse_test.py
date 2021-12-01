@@ -52,7 +52,8 @@ def test_add_to_watchlist():
 def test_add_steam_account():
     userID = "test@gmail"
     steamID = 12345
-    assert DatabaseUse.add_steam_account(userID, steamID) == True
+    with pytest.raises(SyntaxError):
+        DatabaseUse.add_steam_account(userID, steamID)
 
 
 def run_all():
