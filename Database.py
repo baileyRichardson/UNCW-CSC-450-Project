@@ -694,7 +694,10 @@ def list_of_tracked_games(userID: str, steamID: int):
         result = db.child("Users/" + userID + "/Steam Accounts/" + str(steamID) + "/Game Tracking").get()
         for game in result.each():
             if game.val()["Tracked"]:
-                tgList.append(game.key())
+                try:
+                    tgList.append(game.key())
+                except AttributeError:
+                    tgList.append(game)
         return tgList
     else:
         return []
