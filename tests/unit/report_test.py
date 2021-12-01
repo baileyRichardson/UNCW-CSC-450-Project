@@ -8,22 +8,16 @@ from SteamUser import SteamUser
 
 def test_instantiate_report():
     # "10000" corresponds to a test user. user_email is usually an email.
-    user_id = "10000"
+    user_id = "aan7056@uncwedu"
     # Instantiating a report object
     test_report = Report(user_id)
     # This specific test account should have a steam account in it.
     assert len(test_report.list_steam_accounts()) >= 1
 
 
-def test_instantiate_report_id_not_found():
-    user_id = "KASDJLKASDLJKDJQD"
-    with pytest.raises(ReportException):
-        test_report = Report(user_id)
-
-
 def test_generate_report():
     # "10000" corresponds to a test user. user_email is usually an email.
-    user_id = "10000"
+    user_id = "aan7056@uncwedu"
     # Instantiating a report object
     test_report = Report(user_id)
     # Connecting to Steam and grabbing the random account.

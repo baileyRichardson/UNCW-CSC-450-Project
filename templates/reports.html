@@ -25,9 +25,15 @@
                         <th>
                             Total Time Played (Minutes)
                         </th>
+                        <th>
+                            Today's Time Played (Minutes)
+                        </th>
+                        <th>
+                            This Week's Time Played (Minutes)
+                        </th>
                     </tr>
                 </thead>
-                {% set names_array, appids_array, hash_array, playtimes_array = account.get_game_names(), account.get_game_appids(), account.get_game_icons(), account.get_playtimes() %}
+                {% set names_array, appids_array, hash_array, playtimes_array, weekly_playtimes, daily_playtimes = account.get_game_names(), account.get_game_appids(), account.get_game_icons(), account.get_playtimes(), account.get_weekly_playtimes(), account.get_daily_playtimes() %}
                 <tbody>
                     {% for i in names_array %}
                         <tr>
@@ -40,6 +46,20 @@
                             </td>
                             <td>
                                 {{ playtimes_array[loop.index - 1] }}
+                            </td>
+                            <td>
+                                {% if daily_playtimes[loop.index - 1] != -1  %}
+                                    {{ daily_playtimes[loop.index - 1] }}
+                                {% else %}
+                                    {{ "" }}
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if weekly_playtimes[loop.index - 1] != -1  %}
+                                    {{ weekly_playtimes[loop.index - 1] }}
+                                {% else %}
+                                    {{ "" }}
+                                {% endif %}
                             </td>
                         </tr>
                     {% endfor %}

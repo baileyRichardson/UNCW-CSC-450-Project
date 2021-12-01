@@ -60,11 +60,7 @@ class Report:
         Pulls the report data from the SteamAPI.
         :return: No return value, but the data is stored in self.report.
         """
-        steam_games = []
-        for account in self.steam_accounts:
-            steam_data = self.__get_games(account)
-            steam_games.append(steam_data)
-        self.report = steam_games
+        self.report = Database.retrieve_report_data(self.user)
 
     def __generate_email_html(self):
         """
