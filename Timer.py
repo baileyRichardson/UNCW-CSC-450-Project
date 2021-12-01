@@ -22,7 +22,7 @@ def scheduler_update_database():
                 print("Game is",game)
                 Database.update_watch_game_lower(user, steam_accounts[0], game, games[game])
 
-            SubprocessPlaytime.updatePlaytime(user)
+            SubprocessPlaytime.update_playtime(user)
         except:
             print('No steam accounts')
 
