@@ -508,6 +508,8 @@ def get_daily_playtime(game_name: str, user_email: str, steam_id: int) -> int:
     """
     This function returns the daily playtime for an individual game
     :param user_email: the associated user
+    This function returns the daily playtime for an individual game
+    :param user_email: the associated user
     :param steam_id: the steam account
     :param game_name: the game to be retrieved
     :return: The playtime if success.
