@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from firebase import firebase
 import pyrebase
-from Playtime import Playtime
+import Playtime
 import SteamUser
 from steamStore import SteamStore
 
@@ -106,18 +106,24 @@ def add_steam_account(userID: str, steamID: int):
     :return: True for success, False for failure
     """
     if get_user(userID) is not None:
-        steam_user = Playtime(steamID, userID).get_game_info(new_user=True)
+        steam_user = Playtime.Playtime(steamID, userID).get_game_info(new_user=True)
+        display_name = steam_user.get_steam_name()
         game_dict = {}
         game_names = steam_user.get_game_names()
         playtimes = steam_user.get_playtimes()
+        app_ids = steam_user.get_game_appids()
+        img_icns = steam_user.get_game_icons()
         for i in range(len(game_names)):
             game_dict[scrub_name(game_names[i])] = {
                 "Tracked": False,
                 "Total Playtime": playtimes[i],
                 "Weekly Playtime": -1,
-                "Daily Playtime": -1
+                "Daily Playtime": -1,
+                "App ID": app_ids[i],
+                "Image Icon": img_icns[i]
             }
         new_data = {
+            "Display Name": display_name,
             "On Report": True,
             "Auto Track": False,
             "Limit Duration": "week",
@@ -546,6 +552,70 @@ def update_playtime(game_name: str, user_email: str, steam_id: int, new_time: in
             steam_id) + "was not found when attempting to update the playtime of: " + game_name)
 
 
+def get_playtime_sums(user_email: str, steam_id: int):
+    """
+    This function returns the total playtimes for the user's steam account.
+    :param user_email: User's email.
+    :param steam_id: User's steam ID.
+    :return: An array with total, weekly, and daily playtimes.
+    """
+    tracked_games = db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) +
+                             "/Game Tracking").order_by_child("Tracking").equal_to(True).get()
+    total_playtime = 0
+    weekly_playtime = 0
+    daily_playtime = 0
+    for game in tracked_games:
+        total_playtime = total_playtime + game["Total Playtime"]
+        weekly_playtime = weekly_playtime + game["Weekly Playtime"]
+        daily_playtime = daily_playtime + game["Daily Playtime"]
+    return total_playtime, weekly_playtime, daily_playtime
+
+
+def retrieve_report_data(user_email: str):
+    """
+    This function grabs all the data necessary for a report, and returns it as a list of SteamUser objects.
+    :param user_email: The desired user's email.
+    :return: A list of SteamUser objects.
+    """
+    all_steam_accounts = list_of_steam_accounts(user_email)
+    data = []
+    for account in all_steam_accounts:
+        steam_id = account
+        steam_name = db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) + "/Display Name").get().val()
+        game_names = []
+        app_ids = []
+        img_icons = []
+        total_playtime = []
+        weekly_playtime = []
+        daily_playtime = []
+        games = db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) + "/Game Tracking").get()
+        for game in games:
+            game_data = game.val()
+            game_names.append(game.key())
+            app_ids.append(game_data["App ID"])
+            img_icons.append(game_data["Image Icon"])
+            total_playtime.append(game_data["Total Playtime"])
+            weekly_playtime.append(game_data["Weekly Playtime"])
+            daily_playtime.append(game_data["Daily Playtime"])
+        account_data = SteamUser.SteamUser(steam_id, steam_name, app_ids, game_names, img_icons,
+                                           total_playtime, weekly_playtime, daily_playtime)
+        data.append(account_data)
+    return data
+
+
+def clear_weekly_playtimes(user_email: str, steam_id: int):
+    tracked_games = list_of_tracked_games(user_email, steam_id)
+    for game in tracked_games:
+        db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) + "/Game Tracking/" +
+                 game).update({"Weekly Playtime": 0})
+
+
+def clear_daily_playtimes(user_email: str, steam_id: int):
+    tracked_games = list_of_tracked_games(user_email, steam_id)
+    for game in tracked_games:
+        db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) + "/Game Tracking/" +
+                 game).update({"Daily Playtime": 0})
+
 def list_of_steam_accounts(userID: str):
     """
     This function returns a list of steam accounts
@@ -554,9 +624,9 @@ def list_of_steam_accounts(userID: str):
     """
     accountList = []
     if get_user(userID) is not None:
-        result = db.child("Users/" + userID + "/Steam Accounts").child().get().val()
+        result = db.child("Users/" + userID + "/Steam Accounts").child().shallow().get().val()
         if result is not None:
-            for key in result.keys():
+            for key in result:
                 accountList.append(key)
             print(accountList)
         return accountList
