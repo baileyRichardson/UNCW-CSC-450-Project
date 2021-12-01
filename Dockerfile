@@ -1,7 +1,6 @@
 
 # Use the official lightweight Python image.
 # https://hub.docker.com/_/python
-# trying to include yaml file
 FROM python:3.9-slim
 
 # Allow statements and log messages to immediately appear in the Knative logs
