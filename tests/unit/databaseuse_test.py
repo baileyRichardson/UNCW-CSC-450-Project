@@ -23,7 +23,8 @@ def test_remove_steam_account():
     auto = "off"
     remove = "on"
     limit = "5"
-    assert DatabaseUse.update_steam_account_page(userID, steamID, auto, remove, limit) == 1
+    often = "1"
+    assert DatabaseUse.update_steam_account_page(userID, steamID, auto, remove, limit, often) == 1
 
 
 def test_toggle_auto():
@@ -34,7 +35,8 @@ def test_toggle_auto():
     auto = "on"
     remove = "off"
     limit = "5"
-    assert DatabaseUse.update_steam_account_page(userID, steamID, auto, remove, limit) == 2
+    often = "1"
+    assert DatabaseUse.update_steam_account_page(userID, steamID, auto, remove, limit, often) == 2
 
 
 def test_add_to_watchlist():
