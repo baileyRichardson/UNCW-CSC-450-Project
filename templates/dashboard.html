@@ -2,6 +2,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Dashboard{% endblock %}</title>
+    {% block scripts %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.1/dist/chart.min.js"></script>
+    {% endblock %}
 </head>
 
 {% block content %}
@@ -14,7 +17,7 @@
     }
     .report {
         border: solid 1px dodgerblue;
-        height: 28vh;
+        height: {{ 40 * dash_report.num_accounts }}vh;
         display: block;
         background-color: white;
     }
@@ -35,7 +38,127 @@
 
 <body>
     <div id="dashboard">
-        <div class="report">Hey this is where a report summary can go</div>
+        <div class="report">
+            {% if dash_report.num_accounts == 0 %}
+                <h1>You have no Steam accounts linked! Go link one!</h1>
+            {% else %}
+                {% for i in range(0, dash_report.num_accounts) %}
+                    {% set account_name = dash_report.steam_accounts[i] %}
+                    {% set d_data = dash_report.doughnut_chart_data[i] %}
+                    {% set d_time, d_limit, d_type = d_data[0], d_data[1], d_data[2] %}
+                    {% if d_limit == -1 %}
+                        <h2>No limit set on account {{ account_name }}!</h2>
+                    {% else %}
+                        <h1>Account: {{ account_name }}</h1>
+                        <div class="chart-container" style="width: 50%; height: auto; float: left">
+                            <canvas id="doughnut_chart" width="200" height="200" ></canvas>
+                        </div>
+                        <div class="chart-container" style="width: 50%; height: auto; float: right">
+                            <canvas id="bar_chart" width="200" height="200" ></canvas>
+                        </div>
+                        {% if d_time < d_limit %}
+                            <script>
+                                const data = {
+                                    labels: [
+                                        'Playtime',
+                                        'Time Remaining'
+                                    ],
+                                    datasets: [{
+                                        label: 'Playtime Dataset',
+                                        data: [{{ d_time }}, {{ d_limit - d_time }}],
+                                        backgroundColor: ['rgb(255, 102, 102', 'rgb(102, 102, 255'],
+                                        hoverOffset: 4
+                                    }
+                                    ]
+                                }
+                                const config = {
+                                    type: 'doughnut',
+                                    data: data,
+                                    options: {
+                                        maintainAspectRatio: false,
+                                    }
+                                }
+                                const doughnut_chart = new Chart(
+                                    document.getElementById('doughnut_chart'),
+                                    config
+                                );
+                            </script>
+                            {% else %}
+                            <h2>Time Exceeded!</h2>
+                            <script>
+                                const data = {
+                                    labels: [
+                                        'Playtime'
+                                    ],
+                                    datasets: [{
+                                        label: 'Playtime Dataset',
+                                        data: [{{ d_time }}],
+                                        backgroundColor: ['rgb(255, 102, 102'],
+                                        hoverOffset: 4
+                                    }
+                                    ]
+                                }
+                                const config = {
+                                    type: 'doughnut',
+                                    data: data,
+                                    options: {
+                                        maintainAspectRatio: false,
+                                    }
+                                }
+                                const doughnut_chart = new Chart(
+                                    document.getElementById('doughnut_chart'),
+                                    config
+                                );
+                            </script>
+                        {% endif %}
+                    {% endif %}
+                    {% set b_data = dash_report.bar_chart_data[i] %}
+                    <script>
+                        const blabels = ["{{ b_data[0][0] }}","{{ b_data[0][1] }}","{{ b_data[0][2] }}","{{ b_data[0][3] }}","{{ b_data[0][4] }}"];
+                        const bdata = {
+                            labels: blabels,
+                            datasets:[{
+                                label: 'Top Five Games by Playtime',
+                                data: {{ b_data[1] }},
+                                backgroundColor: [
+                                    'rgba(255, 99, 132, 0.2)',
+                                    'rgba(255, 159, 64, 0.2)',
+                                    'rgba(255, 205, 86, 0.2)',
+                                    'rgba(75, 192, 192, 0.2)',
+                                    'rgba(54, 162, 235, 0.2)'
+                                    ],
+                                borderColor: [
+                                    'rgb(255, 99, 132)',
+                                    'rgb(255, 159, 64)',
+                                    'rgb(255, 205, 86)',
+                                    'rgb(75, 192, 192)',
+                                    'rgb(54, 162, 235)'
+                                    ],
+                                borderWidth: 1
+                            }]
+                        }
+                        const bconfig = {
+                            type: 'bar',
+                            data: bdata,
+                            options:{
+                                maintainAspectRatio: false,
+                                responsive: false,
+                                scales:{
+                                    y:{
+                                        beginAtZero: true,
+                                        name: "Time in Minutes"
+                                    }
+                                }
+                            }
+                        }
+                        const bar_chart = new Chart(
+                                    document.getElementById('bar_chart'),
+                                    bconfig
+                                );
+                    </script>
+                {% endfor %}
+            {% endif %}
+        </div>
         <div class="watchedList">This can be for watched games</div>
         <div class="coolStats">This can be for whatever other stuff we want on the dashboard</div>
     </div>

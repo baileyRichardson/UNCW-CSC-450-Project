@@ -561,16 +561,42 @@ def get_playtime_sums(user_email: str, steam_id: int):
     :param steam_id: User's steam ID.
     :return: An array with total, weekly, and daily playtimes.
     """
-    tracked_games = db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) +
-                             "/Game Tracking").order_by_child("Tracking").equal_to(True).get()
+    tracked_games = list_of_tracked_games(user_email, steam_id)
     total_playtime = 0
     weekly_playtime = 0
     daily_playtime = 0
     for game in tracked_games:
-        total_playtime = total_playtime + game["Total Playtime"]
-        weekly_playtime = weekly_playtime + game["Weekly Playtime"]
-        daily_playtime = daily_playtime + game["Daily Playtime"]
+        total_playtime = total_playtime + get_playtime(game, user_email, steam_id)
+        weekly_playtime = weekly_playtime + get_weekly_playtime(game, user_email, steam_id)
+        daily_playtime = daily_playtime + get_daily_playtime(game, user_email, steam_id)
     return total_playtime, weekly_playtime, daily_playtime
+
+
+def get_top_five_games(user_email: str, steam_id: int):
+    """
+    This function returns the top five playtimes for the user's steam account.
+    :param user_email: User's email.
+    :param steam_id: User's steam ID.
+    :return: An array of tuples, the tuples being the game's name and its playtime.
+    """
+    list_games = db.child("Users/" + user_email + "/Steam Accounts/" + str(steam_id) +
+                             "/Game Tracking").get()
+    top_games = []
+    times = []
+    for game in list_games:
+        name = game.key()
+        playtime = game.val()["Total Playtime"]
+        top_games.append(name)
+        times.append(playtime)
+    lists = zip(times, top_games)
+    lists = sorted(lists)
+    tuples = zip(*lists)
+    times, top_games = [list(tuple) for tuple in tuples]
+
+    top_games = top_games[:5:-1]
+    times = times[:5:-1]
+
+    return [top_games, times]
 
 
 def retrieve_report_data(user_email: str):
