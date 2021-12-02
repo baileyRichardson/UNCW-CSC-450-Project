@@ -90,7 +90,9 @@ def login():
 def dashboard():
     try:
         print(session["user"])
-        return render_template("dashboard.html")
+        dash_data = DashboardReport.DashReport(
+            authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
+        return render_template("dashboard.html", dash_report=dash_data)
     except KeyError:
         return render_template("loginPage.html")
 
