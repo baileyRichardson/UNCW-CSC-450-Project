@@ -6,6 +6,7 @@ from flask import *
 import Database
 import DatabaseUse
 # import Notifications
+import Mail
 import Timer
 from Playtime import Playtime
 import userManager
@@ -42,14 +43,12 @@ authentication = firebase.auth()
 
 sched = BackgroundScheduler(daemon=True)
 # will check for if a game is beneath a price
-# sched.add_job(Timer.scheduler_update_database, 'interval', minutes=15)
+sched.add_job(Timer.scheduler_update_database, 'interval', days=1)
 # send out notifications
-sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='sat', hour=18, minute=34, misfire_grace_time=None)
+# sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week='sat', hour=18, minute=34, misfire_grace_time=None)
 sched.add_job(Timer.scheduler_notification_day, 'cron', hour=20, minute=22, misfire_grace_time=None)
 sched.add_job(Timer.scheduler_notification_week, 'cron', day_of_week='sat', hour=15, misfire_grace_time=None)
-# test lines
-# sched.add_job(Timer.scheduler_notification_day, 'cron', day_of_week="*",hour="15", minute="45")
-# sched.add_job(Timer.sc# timer_started = Falseheduler_notification_week, 'cron', day_of_week="*",hour="15", minute="45")
+sched.add_job(Timer.scheduler_notification_month, 'cron', day=1, hour=15, misfire_grace_time=None)
 # turn off process when app is closed
 atexit.register(lambda: sched.shutdown())
 
@@ -179,6 +178,8 @@ def settingSteamAccount():
                         steam_account)
                     auto = request.form.get("auto" + account, default_value)
                     limit = request.form.get("limit" + account, "null")
+                    often = request.form.get("often"+account, "null")
+                    print(type(often))
                     print("limit is" + limit + "with type:" + str(type(limit)))
                     print(prev_limit)
                     # remove steam account
@@ -186,7 +187,7 @@ def settingSteamAccount():
                     DatabaseUse.update_steam_account_page(
                         authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",
                                                                                                                   ""),
-                        steam_account, auto, remove, limit)
+                        steam_account, auto, remove, limit, often)
                 new_accounts = Database.list_of_steam_accounts(
                     authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
                 new_limits = []
