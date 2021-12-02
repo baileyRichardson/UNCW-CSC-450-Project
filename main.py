@@ -6,6 +6,7 @@ from flask import *
 import Database
 import DatabaseUse
 # import Notifications
+import Subprocess
 import Timer
 from Playtime import Playtime
 import userManager
@@ -13,6 +14,7 @@ import accountSettings
 # import accountSettings
 import tests.unit.databaseuse_test as DBT
 from Report import Report, ReportException
+from Subprocess import watch_vs_store_price
 from SteamUser import SteamUser
 import pyrebase
 from flask import json
@@ -88,7 +90,10 @@ def login():
 def dashboard():
     try:
         print(session["user"])
-        return render_template("dashboard.html")
+        dashboard_data = watch_vs_store_price(
+            authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
+        print(dashboard_data)
+        return render_template("dashboard.html", data=dashboard_data)
     except KeyError:
         return render_template("loginPage.html")
 

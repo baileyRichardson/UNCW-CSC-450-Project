@@ -4,7 +4,6 @@
     <title>{% block title %}Dashboard{% endblock %}</title>
 </head>
 
-{% block content %}
 
     <style>
 
@@ -33,13 +32,26 @@
 
     </style>
 
+{% block content %}
 <body>
-    <div id="dashboard">
-        <div class="report">Hey this is where a report summary can go</div>
-        <div class="watchedList">This can be for watched games</div>
-        <div class="coolStats">This can be for whatever other stuff we want on the dashboard</div>
-    </div>
-</body>
+{#    <div id="dashboard">#}
+{#        <div class="report">Hey this is where a report summary can go</div>#}
 
+<div id="watchedList">
+
+<table>
+{% for key, value in data.iteritems() %}
+   <tr>
+        <th> {{ key }} </th>
+        <td> {{ value }} </td>
+   </tr>
+{% endfor %}
+</table>
+
+</div>
+
+{#        <div class="coolStats">This can be for whatever other stuff we want on the dashboard</div>#}
+{#    </div>#}
+</body>
 {% endblock %}
 
