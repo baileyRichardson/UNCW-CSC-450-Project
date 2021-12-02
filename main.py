@@ -6,6 +6,7 @@ from flask import *
 import Database
 import DatabaseUse
 # import Notifications
+import Mail
 import Timer
 from Playtime import Playtime
 import userManager
@@ -177,6 +178,8 @@ def settingSteamAccount():
                         steam_account)
                     auto = request.form.get("auto" + account, default_value)
                     limit = request.form.get("limit" + account, "null")
+                    often = request.form.get("often"+account, "null")
+                    print(type(often))
                     print("limit is" + limit + "with type:" + str(type(limit)))
                     print(prev_limit)
                     # remove steam account
@@ -184,7 +187,7 @@ def settingSteamAccount():
                     DatabaseUse.update_steam_account_page(
                         authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".",
                                                                                                                   ""),
-                        steam_account, auto, remove, limit)
+                        steam_account, auto, remove, limit, often)
                 new_accounts = Database.list_of_steam_accounts(
                     authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
                 new_limits = []

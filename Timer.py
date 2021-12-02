@@ -25,6 +25,7 @@ def scheduler_update_database():
                     Database.update_watch_game_lower(user, steam_accounts[0], game, games[game])
 
                 SubprocessPlaytime.update_playtime(user)
+                SubprocessPlaytime.compare_playtime(user)
             except:
                 print('No steam accounts')
         return True

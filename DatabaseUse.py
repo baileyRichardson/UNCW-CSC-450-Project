@@ -4,21 +4,27 @@ import steamStore
 database = Database
 
 
-def update_steam_account_page(userID: str, steamID: int, auto: str, remove: str, limit: str):
+def update_steam_account_page(userID: str, steamID: int, auto: str, remove: str, limit: str, often: str):
     if remove == "on":
         database.delete_steam_account(userID, steamID)
         return 1
     else:
         toggle = database.get_auto_track(userID, steamID)
         time = database.get_playtime_limit(userID, steamID)
+        duration = database.get_limit_duration(userID, steamID)
         if auto == "on":
             toggle = True
         if auto == "off":
             toggle = False
         if limit != "":
             time = float(limit)
+        if often == '1':
+            duration = 'day'
+        if often == '2':
+            duration = 'week'
         database.toggle_auto_track(userID, steamID, toggle)
         database.set_playtime_limit(userID, steamID, time)
+        database.set_limit_duration(userID, steamID, duration)
         return 2
 
 
