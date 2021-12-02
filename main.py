@@ -24,6 +24,7 @@ import DatabaseTest
 import steamStore
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
+import DashboardReport
 
 app = Flask(__name__)
 key = os.urandom(12).hex()
@@ -63,7 +64,9 @@ def login():
             user = authentication.refresh(user['refreshToken'])
             user_token = user["idToken"]
             session["user"] = user_token
-            return render_template("dashboard.html")
+            dash_data = DashboardReport.DashReport(
+                authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
+            return render_template("dashboard.html", dash_report=dash_data)
         except requests.HTTPError as exception:
             error_json = exception.args[1]
             error = json.loads(error_json)["error"]["message"]
