@@ -7,6 +7,7 @@ import Database
 import DatabaseUse
 # import Notifications
 import Mail
+import Subprocess
 import Timer
 from Playtime import Playtime
 import userManager
@@ -25,6 +26,7 @@ import steamStore
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 import DashboardReport
+from Subprocess import watch_vs_store_price
 
 app = Flask(__name__)
 key = os.urandom(12).hex()
@@ -66,7 +68,22 @@ def login():
             session["user"] = user_token
             dash_data = DashboardReport.DashReport(
                 authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-            return render_template("dashboard.html", dash_report=dash_data)
+            # watch_data = watch_vs_store_price(
+            #     authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
+            some_data = Subprocess.watch_vs_store_price(
+                authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
+            # print(some_data)
+            game_names = []
+            prices = []
+            for value in some_data.values():
+                prices.append(value)
+                print(value)
+            for key in some_data.keys():
+                game_names.append(key)
+                print(key)
+            print(game_names)
+            print(prices)
+            return render_template("dashboard.html", dash_report=dash_data, games=game_names, prices=prices)
         except requests.HTTPError as exception:
             error_json = exception.args[1]
             error = json.loads(error_json)["error"]["message"]
@@ -92,7 +109,24 @@ def dashboard():
         print(session["user"])
         dash_data = DashboardReport.DashReport(
             authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-        return render_template("dashboard.html", dash_report=dash_data)
+        # watch_data = watch_vs_store_price(
+        #     authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
+
+        some_data = Subprocess.watch_vs_store_price(
+            authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
+        # print(some_data)
+        game_names = []
+        prices = []
+        for value in some_data.values():
+            prices.append(value)
+            print(value)
+        for key in some_data.keys():
+            game_names.append(key)
+            print(key)
+        print(game_names)
+        print(prices)
+        return render_template("dashboard.html", dash_report=dash_data, games=game_names, prices=prices)
+        # return render_template("dashboard.html", dash_report=dash_data, watch_report=watch_data)
     except KeyError:
         return render_template("loginPage.html")
 
