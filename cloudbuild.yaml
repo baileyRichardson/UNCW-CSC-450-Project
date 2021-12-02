@@ -1,0 +1,14 @@
+steps:
+# Testing for auto deploy after build
+# Build the container image
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/csc-450-group-5-project/gcr.io/csc-450-group-5-project/github.com/uncw-csc-450/software-engineering-team-project-team-5:$COMMIT_SHA', '.']
+# Push the container image to Container Registry
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/csc-450-group-5-project/gcr.io/csc-450-group-5-project/github.com/uncw-csc-450/software-engineering-team-project-team-5:$COMMIT_SHA']
+# Deploy container image to Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: gcloud
+  args: ['run', 'deploy', 'app', '--image', 'gcr.io/csc-450-group-5-project/gcr.io/csc-450-group-5-project/github.com/uncw-csc-450/software-engineering-team-project-team-5:$COMMIT_SHA', '--region', 'us-east1']
+images:
+- gcr.io/csc-450-group-5-project/gcr.io/csc-450-group-5-project/github.com/uncw-csc-450/software-engineering-team-project-team-5:$COMMIT_SHA
