@@ -159,14 +159,38 @@
                 {% endfor %}
             {% endif %}
         </div>
+
         <div class="watchedList">
             <table>
-                {% for game in games %}
+                <thead>
                 <tr>
-                    <th>{{game}}</th>
-                    <td>{{prices[loop.index0]}}</td>
+                    <th>
+                        Watched Games
+                    </th>
+                    <th>
+                        Your Watch Price
+                    </th>
+                    <th>
+                        Steam Store Price
+                    </th>
                 </tr>
+
+                </thead>
+                <tbody>
+                {% for game, price in watch_report.items() %}
+                    <tr>
+                        <td>
+                            {{game}}
+                        </td>
+                        <td>
+                            {{price[0]}}
+                        </td>
+                        <td>
+                            {{price[1]}}
+                        </td>
+                    </tr>
                 {% endfor%}
+                </tbody>
             </table>
         </div>
     </div>
