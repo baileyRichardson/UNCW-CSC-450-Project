@@ -37,10 +37,11 @@
     </style>
 
 <body>
-    <div id="dashboard">
-        <div class="report">
+{% if accountLinked %}
+{#    <div id="dashboard">#}
+{#        <div class="report">#}
             {% if dash_report.num_accounts == 0 %}
-                <h1>You have no Steam accounts linked! Go link one!</h1>
+                <p>You have no Steam accounts linked! Go link one!</p>
             {% else %}
                 {% for i in range(0, dash_report.num_accounts) %}
                     {% set account_name = dash_report.steam_accounts[i] %}
@@ -158,44 +159,50 @@
                     </script>
                 {% endfor %}
             {% endif %}
-        </div>
+{#        </div>#}
 
-        <div class="watchedList">
-            <table>
-                <thead>
-                <tr>
-                    <th>
-                        Watched Games
-                    </th>
-                    <th>
-                        Your Watch Price
-                    </th>
-                    <th>
-                        Steam Store Price
-                    </th>
-                </tr>
-
-                </thead>
-                <tbody>
-                {% for game, price in watch_report.items() %}
+{#        <div class="watchedList">#}
+            {% if watch_length == 0 %}
+                <p>You have no watched games! Go add some!</p>
+            {% else %}
+                <table>
+                    <thead>
                     <tr>
-                        <td>
-                            {{game}}
-                        </td>
-                        <td>
-                            {{price[0]}}
-                        </td>
-                        <td>
-                            {{price[1]}}
-                        </td>
+                        <th>
+                            Watched Games
+                        </th>
+                        <th>
+                            Your Watch Price
+                        </th>
+                        <th>
+                            Steam Store Price
+                        </th>
                     </tr>
-                {% endfor%}
-                </tbody>
-            </table>
-        </div>
-    </div>
+
+                    </thead>
+                    <tbody>
+                    {% for game, price in watch_report.items() %}
+                        <tr>
+                            <td>
+                                {{game}}
+                            </td>
+                            <td>
+                                {{price[0]}}
+                            </td>
+                            <td>
+                                {{price[1]}}
+                            </td>
+                        </tr>
+                    {% endfor%}
+                    </tbody>
+                </table>
+            {% endif %}
+{#            </div>#}
+{% else %}
+    <p>You have no Steam account linked. Go link one!</p>
+{% endif %}
+{#    </div>#}
         <div class="coolStats">This can be for whatever other stuff we want on the dashboard</div>
 </body>
-
 {% endblock %}
 
