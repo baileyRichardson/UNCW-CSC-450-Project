@@ -70,7 +70,11 @@ def login():
                 authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
             watch_data = watch_vs_store_price(
                 authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-            return render_template("dashboard.html", dash_report=dash_data, watch_report=watch_data)
+            how_many_watched = len(watch_data)
+            return render_template("dashboard.html", dash_report=dash_data, watch_report=watch_data,
+                                   watch_length=how_many_watched, accountLinked=True)
+        except ReportException:
+            return render_template("dashboard.html", accountLinked=False)
         except requests.HTTPError as exception:
             error_json = exception.args[1]
             error = json.loads(error_json)["error"]["message"]
@@ -98,9 +102,13 @@ def dashboard():
             authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
         watch_data = watch_vs_store_price(
             authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-        return render_template("dashboard.html", dash_report=dash_data, watch_report=watch_data)
+        how_many_watched = len(watch_data)
+        return render_template("dashboard.html", dash_report=dash_data, watch_report=watch_data,
+                               watch_length=how_many_watched, accountLinked=True)
     except KeyError:
         return render_template("loginPage.html")
+    except ReportException:
+        return render_template("dashboard.html", accountLinked=False)
 
 
 @app.route('/reports/')
