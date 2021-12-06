@@ -1,9 +1,5 @@
 """
 Author: William Ebright
-
-Notes:
-    Make Steam account with free games called SteamMonitor for steam linking tests.
-    open web-page in small view? <-- possible test?
 """
 from playwright.sync_api import sync_playwright
 import time
