@@ -38,8 +38,8 @@
 
 <body>
 {% if accountLinked %}
-    <div id="dashboard">
-        <div class="report">
+{#    <div id="dashboard">#}
+{#        <div class="report">#}
             {% if dash_report.num_accounts == 0 %}
                 <p>You have no Steam accounts linked! Go link one!</p>
             {% else %}
@@ -159,9 +159,9 @@
                     </script>
                 {% endfor %}
             {% endif %}
-        </div>
+{#        </div>#}
 
-        <div class="watchedList">
+{#        <div class="watchedList">#}
             {% if watch_length == 0 %}
                 <p>You have no watched games! Go add some!</p>
             {% else %}
@@ -197,11 +197,11 @@
                     </tbody>
                 </table>
             {% endif %}
-            </div>
+{#            </div>#}
 {% else %}
     <p>You have no Steam account linked. Go link one!</p>
 {% endif %}
-    </div>
+{#    </div>#}
         <div class="coolStats">This can be for whatever other stuff we want on the dashboard</div>
 </body>
 {% endblock %}
