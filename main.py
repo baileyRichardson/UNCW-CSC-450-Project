@@ -68,22 +68,13 @@ def login():
             session["user"] = user_token
             dash_data = DashboardReport.DashReport(
                 authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-            # watch_data = watch_vs_store_price(
-            #     authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-            some_data = Subprocess.watch_vs_store_price(
+            watch_data = watch_vs_store_price(
                 authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-            # print(some_data)
-            game_names = []
-            prices = []
-            for value in some_data.values():
-                prices.append(value)
-                print(value)
-            for key in some_data.keys():
-                game_names.append(key)
-                print(key)
-            print(game_names)
-            print(prices)
-            return render_template("dashboard.html", dash_report=dash_data, games=game_names, prices=prices)
+            how_many_watched = len(watch_data)
+            return render_template("dashboard.html", dash_report=dash_data, watch_report=watch_data,
+                                   watch_length=how_many_watched, accountLinked=True)
+        except ReportException:
+            return render_template("dashboard.html", accountLinked=False)
         except requests.HTTPError as exception:
             error_json = exception.args[1]
             error = json.loads(error_json)["error"]["message"]
@@ -109,26 +100,15 @@ def dashboard():
         print(session["user"])
         dash_data = DashboardReport.DashReport(
             authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-        # watch_data = watch_vs_store_price(
-        #     authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-
-        some_data = Subprocess.watch_vs_store_price(
+        watch_data = watch_vs_store_price(
             authentication.get_account_info(session.get('user')).get('users')[0].get('email').replace(".", ""))
-        # print(some_data)
-        game_names = []
-        prices = []
-        for value in some_data.values():
-            prices.append(value)
-            print(value)
-        for key in some_data.keys():
-            game_names.append(key)
-            print(key)
-        print(game_names)
-        print(prices)
-        return render_template("dashboard.html", dash_report=dash_data, games=game_names, prices=prices)
-        # return render_template("dashboard.html", dash_report=dash_data, watch_report=watch_data)
+        how_many_watched = len(watch_data)
+        return render_template("dashboard.html", dash_report=dash_data, watch_report=watch_data,
+                               watch_length=how_many_watched, accountLinked=True)
     except KeyError:
         return render_template("loginPage.html")
+    except ReportException:
+        return render_template("dashboard.html", accountLinked=False)
 
 
 @app.route('/reports/')
@@ -187,7 +167,7 @@ def test():
         print(shouldLogin)
         if shouldLogin is not None:
             steamLogin = SteamSignIn()
-            return steamLogin.RedirectUser(steamLogin.ConstructURL('http://127.0.0.1:5000/processlogin'))
+            return steamLogin.RedirectUser(steamLogin.ConstructURL('https://app-l47rwjgwkq-ue.a.run.app/settingSteamAccount'))
         return 'Click <a href="/test/?test=true">to log in</a>'
     except KeyError:
         return render_template("loginPage.html")
