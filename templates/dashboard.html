@@ -164,7 +164,7 @@
                 <thead>
                     <tr>
                         <th>Game</th>
-                        <th>Current Price</th>
+                        <th>Store Price</th>
                         <th>Target Price</th>
                     </tr>
                 </thead>
@@ -172,8 +172,8 @@
                     {% for game, price in watch_report.items() %}
                     <tr>
                         <td>{{game}}</td>
-                        <td>{{price[0]}}</td>
                         <td>{{price[1]}}</td>
+                        <td>{{price[0]}}</td>
                     </tr>
                     {% endfor%}
                 </tbody>
