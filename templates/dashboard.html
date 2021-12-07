@@ -40,8 +40,6 @@
 
 <body>
 {% if accountLinked %}
-{#    <div id="dashboard">#}
-{#        <div class="report">#}
             {% if dash_report.num_accounts == 0 %}
                 <p>You have no Steam accounts linked! Go link one!</p>
             {% else %}
@@ -161,7 +159,6 @@
                     </script>
                 {% endfor %}
             {% endif %}
-        </div>
         <div>
             <table id="watchedList" class="display">
                 <thead>
@@ -172,11 +169,11 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for game in games %}
+                    {% for game, price in watch_report.items() %}
                     <tr>
                         <td>{{game}}</td>
-                        <td>{{prices[loop.index0][1]}}</td>
-                        <td>{{prices[loop.index0][0]}}</td>
+                        <td>{{price[0]}}</td>
+                        <td>{{price[1]}}</td>
                     </tr>
                     {% endfor%}
                 </tbody>
@@ -194,8 +191,5 @@
 {% else %}
     <p>You have no Steam account linked. Go link one!</p>
 {% endif %}
-{#    </div>#}
-        <div class="coolStats">This can be for whatever other stuff we want on the dashboard</div>
-</body>
 {% endblock %}
 
