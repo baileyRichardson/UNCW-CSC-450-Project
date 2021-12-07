@@ -167,7 +167,7 @@ def test():
         print(shouldLogin)
         if shouldLogin is not None:
             steamLogin = SteamSignIn()
-            return steamLogin.RedirectUser(steamLogin.ConstructURL('http://127.0.0.1:5000/processlogin'))
+            return steamLogin.RedirectUser(steamLogin.ConstructURL('https://app-l47rwjgwkq-ue.a.run.app/processlogin'))
         return 'Click <a href="/test/?test=true">to log in</a>'
     except KeyError:
         return render_template("loginPage.html")
