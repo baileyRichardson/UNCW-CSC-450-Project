@@ -3,7 +3,9 @@
     <meta charset="UTF-8">
     <title>{% block title %}Dashboard{% endblock %}</title>
     {% block scripts %}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.1/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.6.1/dist/chart.min.js"></script><script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.js"></script>
     {% endblock %}
 </head>
 
@@ -159,45 +161,36 @@
                     </script>
                 {% endfor %}
             {% endif %}
-{#        </div>#}
-
-{#        <div class="watchedList">#}
-            {% if watch_length == 0 %}
-                <p>You have no watched games! Go add some!</p>
-            {% else %}
-                <table>
-                    <thead>
+        </div>
+        <div>
+            <table id="watchedList" class="display">
+                <thead>
                     <tr>
-                        <th>
-                            Watched Games
-                        </th>
-                        <th>
-                            Your Watch Price
-                        </th>
-                        <th>
-                            Steam Store Price
-                        </th>
+                        <th>Game</th>
+                        <th>Current Price</th>
+                        <th>Target Price</th>
                     </tr>
-
-                    </thead>
-                    <tbody>
-                    {% for game, price in watch_report.items() %}
-                        <tr>
-                            <td>
-                                {{game}}
-                            </td>
-                            <td>
-                                {{price[0]}}
-                            </td>
-                            <td>
-                                {{price[1]}}
-                            </td>
-                        </tr>
+                </thead>
+                <tbody>
+                    {% for game in games %}
+                    <tr>
+                        <td>{{game}}</td>
+                        <td>{{prices[loop.index0][1]}}</td>
+                        <td>{{prices[loop.index0][0]}}</td>
+                    </tr>
                     {% endfor%}
-                    </tbody>
-                </table>
-            {% endif %}
-{#            </div>#}
+                </tbody>
+            </table>
+        </div>
+</body>
+<script>
+    $(document).ready( function () {
+        $('table.display').DataTable({
+            columnDefs: [
+            ]
+        });
+    } );
+</script>
 {% else %}
     <p>You have no Steam account linked. Go link one!</p>
 {% endif %}
